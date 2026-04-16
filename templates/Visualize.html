@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Visualize — CardioAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo"><span class="logo-icon">♥</span><span>CardioAI</span></a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/risk">Know My Risk</a></li>
+    <li><a href="/reduce">Reduce Risk</a></li>
+    <li><a href="/visualize" class="active">Visualize</a></li>
+    <li><a href="/faq">FAQ</a></li>
+  </ul>
+</nav>
+
+<section class="page-hero">
+  <div class="hero-bg"><div class="pulse-ring r1"></div><div class="pulse-ring r2"></div></div>
+  <div class="hero-content">
+    <div class="hero-badge">Data Insights</div>
+    <h1 class="hero-title">Dataset<br><span class="accent">Visualization</span></h1>
+    <p class="hero-sub">Explore patterns in the cardiovascular dataset. Charts load from the backend — you can swap datasets using the selector.</p>
+  </div>
+</section>
+
+<section class="viz-section">
+  <div class="container">
+
+    <div class="viz-controls">
+      <div class="viz-control-group">
+        <label>Dataset</label>
+        <select id="datasetSelect" onchange="loadViz()">
+          <option value="cardio">Cardio Train Dataset</option>
+          <option value="shanxi">Shanxi Cardio Dataset</option>
+        </select>
+      </div>
+      <div class="viz-info-box">
+        <span id="datasetInfo">Loading dataset info...</span>
+      </div>
+    </div>
+
+    <!-- How data visualization works - explanation -->
+    <div class="viz-explain">
+      <h3>📊 How the charts work</h3>
+      <p>These charts call <code>/api/vizdata?dataset=cardio</code> on your Flask backend. Your <code>dataset.py</code> loads the CSV, computes summaries (counts, averages, distributions), and returns JSON. Chart.js renders it client-side. To add a new chart: add a route in <code>app.py</code> returning aggregated JSON, then add a canvas + fetch call here.</p>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card wide">
+        <h3>Age Distribution by Cardiovascular Risk</h3>
+        <p class="chart-sub">How age correlates with positive/negative diagnosis</p>
+        <canvas id="ageChart"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>Risk by Gender</h3>
+        <p class="chart-sub">Breakdown of cardio risk by biological sex</p>
+        <canvas id="genderChart"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>Cholesterol Distribution</h3>
+        <p class="chart-sub">Level 1/2/3 across positive cases</p>
+        <canvas id="cholChart"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>Smoker vs Non-Smoker Risk</h3>
+        <p class="chart-sub">Proportion of high-risk patients who smoke</p>
+        <canvas id="smokeChart"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>BMI vs Blood Pressure</h3>
+        <p class="chart-sub">Scatter of BMI vs systolic BP (sample of 200 points)</p>
+        <canvas id="scatterChart"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>Activity Level & Risk</h3>
+        <p class="chart-sub">Physically active vs inactive risk comparison</p>
+        <canvas id="activeChart"></canvas>
+      </div>
+    </div>
+
+    <div class="viz-note">
+      <strong>Note:</strong> These charts use sample/synthetic data for demonstration when the backend API isn't connected. In production, they call <code>GET /api/vizdata?dataset=cardio</code>. See <code>dataset.py</code> for the data-loading logic. The <code>/visualize</code> Flask route renders this page; the charts fetch data separately via the API endpoint.
+    </div>
+  </div>
+</section>
+
+<script>
+const COLORS = {
+  red: 'rgba(239,68,68,0.8)',
+  blue: 'rgba(59,130,246,0.8)',
+  green: 'rgba(34,197,94,0.8)',
+  orange: 'rgba(249,115,22,0.8)',
+  purple: 'rgba(168,85,247,0.8)',
+  teal: 'rgba(20,184,166,0.8)',
+  redLight: 'rgba(239,68,68,0.15)',
+  blueLight: 'rgba(59,130,246,0.15)',
+};
+
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+
+let charts = {};
+
+function destroyAll() {
+  Object.values(charts).forEach(c => c.destroy());
+  charts = {};
+}
+
+async function loadViz() {
+  const dataset = document.getElementById('datasetSelect').value;
+  let data;
+
+  try {
+    const res = await fetch(`/api/vizdata?dataset=${dataset}`);
+    data = await res.json();
+    document.getElementById('datasetInfo').textContent = `${data.total_records?.toLocaleString()} records loaded`;
+  } catch(e) {
+    // Fallback demo data
+    data = getDemoData(dataset);
+    document.getElementById('datasetInfo').textContent = `Demo data (backend not connected) — ${data.total_records} records`;
+  }
+
+  destroyAll();
+  renderCharts(data);
+}
+
+function getDemoData(ds) {
+  return {
+    total_records: ds === 'cardio' ? 70000 : 1025,
+    age_bins: ['30-35','35-40','40-45','45-50','50-55','55-60','60-65'],
+    age_pos: [120,340,890,1800,2300,2100,1600],
+    age_neg: [890,1200,1800,1900,1700,1100,700],
+    gender_pos: [3200, 2800],
+    gender_neg: [4100, 3900],
+    chol_pos: [1800, 2400, 1800],
+    chol_neg: [5200, 1200, 600],
+    smoke_risk: [62, 38],
+    bmi_sample: Array.from({length:80}, (_,i) => ({x: 17+Math.random()*23, y: 90+Math.random()*80})),
+    active_pos: [3800, 2200],
+    active_neg: [4600, 1400],
+  };
+}
+
+function renderCharts(data) {
+  // Age distribution
+  charts.age = new Chart(document.getElementById('ageChart'), {
+    type: 'bar',
+    data: {
+      labels: data.age_bins,
+      datasets: [
+        { label: 'High Risk', data: data.age_pos, backgroundColor: COLORS.red, borderRadius: 4 },
+        { label: 'Low Risk', data: data.age_neg, backgroundColor: COLORS.blue, borderRadius: 4 }
+      ]
+    },
+    options: { plugins: { legend: { position: 'top' }}, scales: { x: { grid: { display: false }}, y: { grid: { color: 'rgba(255,255,255,0.05)' }}}}
+  });
+
+  // Gender
+  charts.gender = new Chart(document.getElementById('genderChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Male High Risk','Female High Risk','Male Low Risk','Female Low Risk'],
+      datasets: [{
+        data: [...data.gender_pos, ...data.gender_neg],
+        backgroundColor: [COLORS.red, COLORS.orange, COLORS.blue, COLORS.teal],
+        borderWidth: 2, borderColor: '#0f172a'
+      }]
+    },
+    options: { plugins: { legend: { position: 'bottom' }}, cutout: '60%' }
+  });
+
+  // Cholesterol
+  charts.chol = new Chart(document.getElementById('cholChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Normal', 'Above Normal', 'High'],
+      datasets: [
+        { label: 'High Risk', data: data.chol_pos, backgroundColor: COLORS.red, borderRadius: 6 },
+        { label: 'Low Risk', data: data.chol_neg, backgroundColor: COLORS.blue, borderRadius: 6 }
+      ]
+    },
+    options: { plugins: { legend: { position: 'top' }}, scales: { x: { grid: { display: false }}, y: { grid: { color: 'rgba(255,255,255,0.05)' }}}}
+  });
+
+  // Smoker
+  charts.smoke = new Chart(document.getElementById('smokeChart'), {
+    type: 'pie',
+    data: {
+      labels: ['Smoker', 'Non-Smoker'],
+      datasets: [{
+        data: data.smoke_risk,
+        backgroundColor: [COLORS.orange, COLORS.teal],
+        borderWidth: 2, borderColor: '#0f172a'
+      }]
+    },
+    options: { plugins: { legend: { position: 'bottom' }}}
+  });
+
+  // BMI Scatter
+  charts.scatter = new Chart(document.getElementById('scatterChart'), {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'BMI vs Systolic BP',
+        data: data.bmi_sample,
+        backgroundColor: COLORS.purple,
+        pointRadius: 4,
+      }]
+    },
+    options: {
+      scales: {
+        x: { title: { display: true, text: 'BMI' }, grid: { color: 'rgba(255,255,255,0.05)' }},
+        y: { title: { display: true, text: 'Systolic BP (mmHg)' }, grid: { color: 'rgba(255,255,255,0.05)' }}
+      },
+      plugins: { legend: { display: false }}
+    }
+  });
+
+  // Activity
+  charts.active = new Chart(document.getElementById('activeChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Active', 'Inactive'],
+      datasets: [
+        { label: 'High Risk', data: data.active_pos, backgroundColor: COLORS.red, borderRadius: 6 },
+        { label: 'Low Risk', data: data.active_neg, backgroundColor: COLORS.green, borderRadius: 6 }
+      ]
+    },
+    options: { plugins: { legend: { position: 'top' }}, scales: { x: { grid: { display: false }}, y: { grid: { color: 'rgba(255,255,255,0.05)' }}}}
+  });
+}
+
+window.onload = loadViz;
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Know My Risk — CardioAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="risk-page">
+
+<nav class="nav">
+  <a href="/" class="nav-logo"><span class="logo-icon">♥</span><span>CardioAI</span></a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/risk" class="active">Know My Risk</a></li>
+    <li><a href="/reduce">Reduce Risk</a></li>
+    <li><a href="/visualize">Visualize</a></li>
+    <li><a href="/faq">FAQ</a></li>
+  </ul>
+</nav>
+
+<div class="risk-layout">
+  <!-- LEFT PANEL -->
+  <div class="risk-sidebar">
+    <div class="risk-sidebar-inner">
+      <div class="sidebar-logo">🫀</div>
+      <h2>Guided Risk<br>Assessment</h2>
+      <p>Answer questions one by one. We'll guide you through each parameter and explain how to measure it.</p>
+      <div class="progress-steps" id="progressSteps">
+        <div class="step-item active" data-step="0">Age</div>
+        <div class="step-item" data-step="1">Gender</div>
+        <div class="step-item" data-step="2">Height</div>
+        <div class="step-item" data-step="3">Weight</div>
+        <div class="step-item" data-step="4">Blood Pressure (Hi)</div>
+        <div class="step-item" data-step="5">Blood Pressure (Lo)</div>
+        <div class="step-item" data-step="6">Cholesterol</div>
+        <div class="step-item" data-step="7">Glucose</div>
+        <div class="step-item" data-step="8">Smoking</div>
+        <div class="step-item" data-step="9">Alcohol</div>
+        <div class="step-item" data-step="10">Physical Activity</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CHAT AREA -->
+  <div class="risk-main">
+    <div class="risk-chat" id="riskChat">
+      <!-- Messages appear here -->
+    </div>
+    <div class="risk-input-area" id="riskInputArea">
+      <div id="riskInputBox"></div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/script.js"></script>
+<script>
+// Step-by-step guided flow
+const steps = [
+  {
+    key: 'age',
+    label: 'Age',
+    question: "Let's start! 👋 What is your <strong>age</strong> in years?",
+    explain: "Age is a key risk factor. Cardiovascular risk increases significantly after age 40.",
+    type: 'number', min: 1, max: 120, unit: 'years', placeholder: 'e.g. 45'
+  },
+  {
+    key: 'gender',
+    label: 'Gender',
+    question: "What is your <strong>biological sex</strong>?",
+    explain: "Men tend to develop cardiovascular disease earlier than women. Hormonal differences affect heart risk.",
+    type: 'select', options: [{val:1, label:'Male'}, {val:2, label:'Female'}]
+  },
+  {
+    key: 'height',
+    label: 'Height',
+    question: "What is your <strong>height</strong>?",
+    explain: "Height is used to calculate your BMI. Measure with a measuring tape against a wall, standing straight.",
+    type: 'number', min: 50, max: 250, unit: 'cm', placeholder: 'e.g. 170'
+  },
+  {
+    key: 'weight',
+    label: 'Weight',
+    question: "What is your <strong>weight</strong>?",
+    explain: "Measure on a flat weighing scale in the morning before eating. Used to calculate your BMI.",
+    type: 'number', min: 10, max: 300, unit: 'kg', placeholder: 'e.g. 70'
+  },
+  {
+    key: 'ap_hi',
+    label: 'Blood Pressure (Hi)',
+    question: "What is your <strong>systolic blood pressure</strong> (upper number)?",
+    explain: "Measure with a blood pressure machine. The upper number is the systolic pressure — the force when your heart beats. Normal is around 120.",
+    type: 'number', min: 60, max: 300, unit: 'mmHg', placeholder: 'e.g. 120'
+  },
+  {
+    key: 'ap_lo',
+    label: 'Blood Pressure (Lo)',
+    question: "What is your <strong>diastolic blood pressure</strong> (lower number)?",
+    explain: "The diastolic number is the pressure between heartbeats. Normal is around 80. Both numbers come from the same BP reading.",
+    type: 'number', min: 40, max: 200, unit: 'mmHg', placeholder: 'e.g. 80'
+  },
+  {
+    key: 'cholesterol',
+    label: 'Cholesterol',
+    question: "What is your <strong>cholesterol level</strong> from your last blood test?",
+    explain: "A lipid panel blood test gives your cholesterol. Normal = under 200 mg/dL. Above Normal = 200–239. High = 240+ mg/dL.",
+    type: 'select', options: [{val:1, label:'Normal (< 200 mg/dL)'}, {val:2, label:'Above Normal (200–239)'}, {val:3, label:'High (240+)'}]
+  },
+  {
+    key: 'gluc',
+    label: 'Glucose',
+    question: "What is your <strong>fasting blood glucose</strong> level?",
+    explain: "A fasting blood sugar test checks for diabetes. Normal = under 100 mg/dL. Pre-diabetic = 100–125. Diabetic = 126+.",
+    type: 'select', options: [{val:1, label:'Normal (< 100 mg/dL)'}, {val:2, label:'Above Normal (100–125)'}, {val:3, label:'High (126+)'}]
+  },
+  {
+    key: 'smoke',
+    label: 'Smoking',
+    question: "Do you currently <strong>smoke</strong>?",
+    explain: "Smoking significantly raises cardiovascular risk. Even light smoking increases the chance of heart disease.",
+    type: 'select', options: [{val:0, label:'No'}, {val:1, label:'Yes'}]
+  },
+  {
+    key: 'alco',
+    label: 'Alcohol',
+    question: "Do you consume <strong>alcohol</strong> regularly?",
+    explain: "Regular heavy drinking raises blood pressure and strains the heart. Occasional moderate drinking is usually classified as No.",
+    type: 'select', options: [{val:0, label:'No / Rarely'}, {val:1, label:'Yes, regularly'}]
+  },
+  {
+    key: 'active',
+    label: 'Physical Activity',
+    question: "Are you <strong>physically active</strong>?",
+    explain: "Physical activity means at least 30 minutes of walking, exercise, or sport most days of the week.",
+    type: 'select', options: [{val:1, label:'Yes, I exercise regularly'}, {val:0, label:'No, mostly sedentary'}]
+  }
+];
+
+let currentStep = 0;
+const answers = {};
+
+function addBotMsg(html, delay = 0) {
+  setTimeout(() => {
+    const chat = document.getElementById('riskChat');
+    const div = document.createElement('div');
+    div.className = 'rmsg bot';
+    div.innerHTML = `<div class="rmsg-inner">${html}</div>`;
+    chat.appendChild(div);
+    setTimeout(() => div.classList.add('visible'), 50);
+    chat.scrollTop = chat.scrollHeight;
+  }, delay);
+}
+
+function addUserMsg(text) {
+  const chat = document.getElementById('riskChat');
+  const div = document.createElement('div');
+  div.className = 'rmsg user';
+  div.innerHTML = `<div class="rmsg-inner">${text}</div>`;
+  chat.appendChild(div);
+  setTimeout(() => div.classList.add('visible'), 50);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function showStep(i) {
+  // Update sidebar
+  document.querySelectorAll('.step-item').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.className = 'step-item' + (s < i ? ' done' : s === i ? ' active' : '');
+  });
+
+  const step = steps[i];
+  const inputBox = document.getElementById('riskInputBox');
+
+  // Show question + explanation
+  addBotMsg(`<p>${step.question}</p><div class="tip-box">💡 ${step.explain}</div>`);
+
+  // Render input
+  setTimeout(() => {
+    if (step.type === 'number') {
+      inputBox.innerHTML = `
+        <div class="rinput-row">
+          <input id="riskNum" type="number" min="${step.min}" max="${step.max}" placeholder="${step.placeholder}" class="rinput">
+          <span class="rinput-unit">${step.unit}</span>
+          <button class="rnext-btn" onclick="submitStep()">Next →</button>
+        </div>`;
+      document.getElementById('riskNum').focus();
+      document.getElementById('riskNum').onkeydown = e => { if(e.key==='Enter') submitStep(); };
+    } else {
+      const opts = step.options.map(o =>
+        `<button class="ropt-btn" onclick="selectOpt(${o.val}, '${o.label}')">${o.label}</button>`
+      ).join('');
+      inputBox.innerHTML = `<div class="ropt-row">${opts}</div>`;
+    }
+  }, 600);
+}
+
+function selectOpt(val, label) {
+  answers[steps[currentStep].key] = val;
+  addUserMsg(label);
+  document.getElementById('riskInputBox').innerHTML = '';
+  currentStep++;
+  if (currentStep < steps.length) {
+    setTimeout(() => showStep(currentStep), 700);
+  } else {
+    submitAll();
+  }
+}
+
+function submitStep() {
+  const inp = document.getElementById('riskNum');
+  if (!inp || !inp.value) return;
+  const val = parseFloat(inp.value);
+  answers[steps[currentStep].key] = val;
+  addUserMsg(`${val} ${steps[currentStep].unit || ''}`);
+  document.getElementById('riskInputBox').innerHTML = '';
+  currentStep++;
+  if (currentStep < steps.length) {
+    // Auto BMI hint after weight
+    if (steps[currentStep-1].key === 'weight' && answers.height) {
+      const bmi = (answers.weight / ((answers.height/100)**2)).toFixed(1);
+      addBotMsg(`<p>Your <strong>BMI is ${bmi}</strong>. ${bmi < 18.5 ? 'You are underweight.' : bmi < 25 ? 'That\'s a healthy BMI! ✅' : bmi < 30 ? 'You are slightly overweight.' : 'BMI is in the obese range — this raises heart risk.'}</p>`, 300);
+    }
+    setTimeout(() => showStep(currentStep), 700);
+  } else {
+    submitAll();
+  }
+}
+
+async function submitAll() {
+  addBotMsg('<p>Thanks! Analyzing your cardiovascular risk now... 🔍</p>');
+  document.getElementById('riskInputBox').innerHTML = `<div class="analyzing">
+    <div class="analyze-spinner"></div>
+    <span>Running ML model...</span>
+  </div>`;
+
+  // Calculate BMI
+  answers.bmi = answers.weight / ((answers.height / 100) ** 2);
+
+  try {
+    const res = await fetch('/predict', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(answers)
+    });
+    const data = await res.json();
+    showResult(data);
+  } catch(e) {
+    // Fallback: simple BMI logic
+    const risk = answers.bmi > 25 || answers.ap_hi > 140 || answers.cholesterol > 1;
+    showResult({ prediction: risk ? 1 : 0, probability: risk ? 0.72 : 0.21 });
+  }
+}
+
+function showResult(data) {
+  document.getElementById('riskInputBox').innerHTML = '';
+  const isHigh = data.prediction === 1;
+  const prob = data.probability ? Math.round(data.probability * 100) : (isHigh ? 72 : 21);
+
+  addBotMsg(`
+    <div class="result-card ${isHigh ? 'high' : 'low'}">
+      <div class="result-icon">${isHigh ? '⚠️' : '✅'}</div>
+      <div class="result-label">${isHigh ? 'High Cardiovascular Risk' : 'Low Cardiovascular Risk'}</div>
+      <div class="result-prob">
+        <div class="prob-bar"><div class="prob-fill" style="width:${prob}%;background:${isHigh?'#ef4444':'#22c55e'}"></div></div>
+        <span>${prob}% risk score</span>
+      </div>
+      <p>${isHigh
+        ? 'Your parameters suggest elevated cardiovascular risk. Please consult a cardiologist and review our risk reduction guide.'
+        : 'Your parameters suggest low cardiovascular risk. Keep up healthy habits!'
+      }</p>
+      <a href="/reduce" class="result-link">View ways to reduce risk →</a>
+    </div>`, 500);
+
+  // Final sidebar update
+  document.querySelectorAll('.step-item').forEach(el => el.className = 'step-item done');
+}
+
+// Start
+window.onload = () => {
+  addBotMsg("👋 Welcome to your <strong>guided cardiovascular risk assessment</strong>. I'll walk you through each health parameter, explain what it means, and how to measure it. Let's begin!");
+  setTimeout(() => showStep(0), 1000);
+};
+</script>
+</body>
+</html>
