@@ -90,19 +90,19 @@
           </div>
           <div class="form-row three">
             <div class="field-group">
-              <label>Cholesterol</label>
+              <label>Cholesterol <span class="unit">(mg/dL)</span></label>
               <select name="cholesterol">
-                <option value="1">Normal</option>
-                <option value="2">Above Normal</option>
-                <option value="3">High</option>
+                <option value="1">1 — Normal (&lt;200 mg/dL)</option>
+                <option value="2">2 — Above Normal (200–239)</option>
+                <option value="3">3 — High (240+ mg/dL)</option>
               </select>
             </div>
             <div class="field-group">
-              <label>Glucose</label>
+              <label>Glucose <span class="unit">(mg/dL)</span></label>
               <select name="gluc">
-                <option value="1">Normal</option>
-                <option value="2">Above Normal</option>
-                <option value="3">High</option>
+                <option value="1">1 — Normal (&lt;100 mg/dL)</option>
+                <option value="2">2 — Pre-diabetic (100–125)</option>
+                <option value="3">3 — Diabetic (126+ mg/dL)</option>
               </select>
             </div>
             <div class="field-group">
@@ -167,15 +167,17 @@
           <div class="guide-item">
             <div class="guide-icon">🧪</div>
             <div>
-              <strong>Cholesterol</strong>
-              <p>From a blood test. 1 = Normal (&lt;200 mg/dL), 2 = Above Normal (200–239), 3 = High (240+).</p>
+              <strong>Cholesterol <span style="font-weight:400;color:var(--muted)">(blood test)</span></strong>
+              <p>From a lipid panel blood test. Select based on your total cholesterol reading:</p>
+              <p><strong>1 — Normal:</strong> &lt;200 mg/dL &nbsp;|&nbsp; <strong>2 — Above Normal:</strong> 200–239 mg/dL &nbsp;|&nbsp; <strong>3 — High:</strong> 240+ mg/dL</p>
             </div>
           </div>
           <div class="guide-item">
             <div class="guide-icon">🍬</div>
             <div>
-              <strong>Glucose</strong>
-              <p>Fasting blood sugar test. 1 = Normal (&lt;100 mg/dL), 2 = Pre-diabetic, 3 = Diabetic range.</p>
+              <strong>Glucose <span style="font-weight:400;color:var(--muted)">(fasting blood sugar)</span></strong>
+              <p>From a fasting blood glucose test (no food for 8 hrs). Select based on your reading:</p>
+              <p><strong>1 — Normal:</strong> &lt;100 mg/dL &nbsp;|&nbsp; <strong>2 — Pre-diabetic:</strong> 100–125 mg/dL &nbsp;|&nbsp; <strong>3 — Diabetic range:</strong> 126+ mg/dL</p>
             </div>
           </div>
           <div class="guide-item">
