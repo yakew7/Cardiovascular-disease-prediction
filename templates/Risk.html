@@ -228,7 +228,7 @@ function submitStep() {
     // Auto BMI hint after weight
     if (steps[currentStep-1].key === 'weight' && answers.height) {
       const bmi = (answers.weight / ((answers.height/100)**2)).toFixed(1);
-      addBotMsg(`<p>Your <strong>BMI is ${bmi}</strong>. ${bmi < 18.5 ? 'You are underweight.' : bmi < 25 ? 'That\'s a healthy BMI! ✅' : bmi < 30 ? 'You are slightly overweight.' : 'BMI is in the obese range — this raises heart risk.'}</p>`, 300);
+      addBotMsg(`<p>Your <strong>BMI is ${bmi}</strong>. ${bmi < 18.5 ? 'You are underweight.' : bmi < 25 ? 'That\'s a healthy BMI!' : bmi < 30 ? 'You are slightly overweight.' : 'BMI is in the obese range — this raises heart risk.'}</p>`, 300);
     }
     setTimeout(() => showStep(currentStep), 700);
   } else {
@@ -252,19 +252,24 @@ async function submitAll() {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(answers)
     });
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({}));
+      addBotMsg('<p style="color:#ef4444">⚠️ Server error: ' + (err.error||'Unknown error') + '. Make sure app.py is running.</p>');
+      document.getElementById('riskInputBox').innerHTML='';
+      return;
+    }
     const data = await res.json();
     showResult(data);
   } catch(e) {
-    // Fallback: simple BMI logic
-    const risk = answers.bmi > 25 || answers.ap_hi > 140 || answers.cholesterol > 1;
-    showResult({ prediction: risk ? 1 : 0, probability: risk ? 0.72 : 0.21 });
+    addBotMsg('<p style="color:#ef4444">⚠️ Could not reach the server. Make sure <code>app.py</code> is running on port 5000.<br>The model requires the Flask backend — it cannot predict without it.</p>');
+    document.getElementById('riskInputBox').innerHTML='';
   }
 }
 
 function showResult(data) {
   document.getElementById('riskInputBox').innerHTML = '';
   const isHigh = data.prediction === 1;
-  const prob = data.probability ? Math.round(data.probability * 100) : (isHigh ? 72 : 21);
+  const prob = data.confidence_pct != null ? data.confidence_pct : Math.round((data.probability||0) * 100);
 
   addBotMsg(`
     <div class="result-card ${isHigh ? 'high' : 'low'}">
@@ -287,7 +292,7 @@ function showResult(data) {
 
 // Start
 window.onload = () => {
-  addBotMsg("👋 Welcome to your <strong>guided cardiovascular risk assessment</strong>. I'll walk you through each health parameter, explain what it means, and how to measure it. Let's begin!");
+  addBotMsg("Welcome to your <strong>guided cardiovascular risk assessment</strong>. I'll walk you through each health parameter, explain what it means, and how to measure it. Let's begin!");
   setTimeout(() => showStep(0), 1000);
 };
 </script>
