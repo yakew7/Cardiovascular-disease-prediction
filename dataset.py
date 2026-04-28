@@ -1,4 +1,9 @@
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy as sc
+import sklearn as sk
+import seaborn as sns
 
 # Load Russia dataset
 russia = pd.read_csv("cardio_train.csv", sep=";")
@@ -56,3 +61,22 @@ def clean_cardio(df):
 russia  = clean_cardio(russia)
 china   = clean_cardio(china)
 combined = clean_cardio(combined)
+
+CHOLESTEROL_MAP = {1: 180, 2: 220, 3: 270}   # mg/dL
+GLUCOSE_MAP     = {1:  90, 2: 115, 3: 180}   # mg/dL
+
+for df in [russia, china, combined]:
+    df["cholesterol_mgdl"] = df["cholesterol"].map(CHOLESTEROL_MAP)
+    df["gluc_mgdl"]        = df["gluc"].map(GLUCOSE_MAP)
+
+    #readable label columns
+    chol_labels = {1: "Normal (<200)", 2: "Above Normal (200–239)", 3: "Well Above Normal (≥240)"}
+    gluc_labels = {1: "Normal (<100)", 2: "Above Normal (100–125)", 3: "Well Above Normal (≥126)"}
+    df["cholesterol_label"] = df["cholesterol"].map(chol_labels)
+    df["gluc_label"]        = df["gluc"].map(gluc_labels)
+
+print("\nCholesterol value mapping (mg/dL):")
+print(combined[["cholesterol", "cholesterol_mgdl", "cholesterol_label"]].drop_duplicates().sort_values("cholesterol"))
+
+print("\nGlucose value mapping (mg/dL):")
+print(combined[["gluc", "gluc_mgdl", "gluc_label"]].drop_duplicates().sort_values("gluc"))
