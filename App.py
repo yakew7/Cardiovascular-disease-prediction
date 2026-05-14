@@ -148,8 +148,8 @@ def vizdata():
 
         # ── BMI scatter (200 pts) ────────────────────────────────────────────
         if 'bmi' in df.columns and 'ap_hi' in df.columns:
-            sample = df[['bmi', 'ap_hi', target_col]].dropna().sample(
-                min(200, len(df)), random_state=42)
+            scatter_df = df[['bmi', 'ap_hi', target_col]].dropna()
+            sample = scatter_df.sample(min(200, len(scatter_df)), random_state=42)
             result['bmi_sample'] = [
                 {'x': round(float(r['bmi']), 1),
                  'y': int(r['ap_hi']),
