@@ -119,6 +119,10 @@ def vizdata():
         'bmi_sample': _bmi_scatter(seed=42),
         'active_pos': [21000, 14000],
         'active_neg': [26000, 9000],
+        'prevalence': {'high_risk': 35000, 'low_risk': 35000},
+        'bmi_bins': ['<18.5', '18.5-25', '25-30', '30-35', '35-40', '40+'],
+        'bmi_pos':  [200,  4800, 12000, 9500, 5200, 2300],
+        'bmi_neg':  [600, 10200, 11000, 5800, 2400,  800],
     }
 
     shanxi_data = {
@@ -134,22 +138,30 @@ def vizdata():
         'bmi_sample': _bmi_scatter(seed=7),
         'active_pos': [298, 188],
         'active_neg': [388, 151],
+        'prevalence': {'high_risk': 486, 'low_risk': 539},
+        'bmi_bins': ['<18.5', '18.5-25', '25-30', '30-35', '35-40', '40+'],
+        'bmi_pos':  [4,  62, 148, 118, 82, 72],
+        'bmi_neg':  [12, 148, 182,  98, 52, 47],
     }
 
     return jsonify(cardio_data if dataset == 'cardio' else shanxi_data)
 
 
 def _bmi_scatter(seed=42):
-    """Generate reproducible scatter points that look realistic."""
+    """Generate reproducible scatter points that look realistic.
+    Includes 'c' field: 1 = high risk, 0 = low risk, based on BMI/BP thresholds."""
     import random
     rng = random.Random(seed)
     points = []
-    for _ in range(80):
+    for _ in range(200):
         bmi = round(rng.gauss(26.5, 4.5), 1)
         bp  = round(rng.gauss(128, 22))
-        bmi = max(16, min(42, bmi))
+        bmi = max(16.0, min(42.0, bmi))
         bp  = max(90, min(200, bp))
-        points.append({'x': bmi, 'y': bp})
+        # Assign risk: higher BMI + higher BP = more likely high risk
+        risk_score = (bmi - 18.5) / 23.5 + (bp - 90) / 110
+        c = 1 if risk_score > 1.0 or rng.random() < 0.35 else 0
+        points.append({'x': bmi, 'y': bp, 'c': c})
     return points
 
 
