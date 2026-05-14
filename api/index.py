@@ -17,23 +17,23 @@ app = Flask(
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('Index.html')
 
 @app.route('/risk')
 def risk():
-    return render_template('risk.html')
+    return render_template('Risk.html')
 
 @app.route('/reduce')
 def reduce():
-    return render_template('reduce.html')
+    return render_template('Reduce.html')
 
 @app.route('/visualize')
 def visualize():
-    return render_template('visualize.html')
+    return render_template('Visualize.html')
 
 @app.route('/faq')
 def faq():
-    return render_template('faq.html')
+    return render_template('Faq.html')
 
 # ── Prediction (heuristic — no sklearn on Vercel) ──────────────
 
