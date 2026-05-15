@@ -245,6 +245,12 @@ a { color: inherit; text-decoration: none; }
 
 .form-row.three {
   grid-template-columns: 1fr 1fr 1fr;
+  align-items: start;
+}
+
+.hyper-section .form-row.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
 }
 
 .field-group {
