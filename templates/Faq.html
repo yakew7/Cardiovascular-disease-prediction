@@ -137,9 +137,81 @@
       </div>
     </div>
   </div>
-</section>
 
-<script>
+  <!-- Hypertension FAQ Section -->
+  <div class="faq-hyper-header">
+    <div class="faq-badge" style="background:rgba(249,115,22,0.15);color:#f97316;border-color:rgba(249,115,22,0.3)">🩺 Hypertension</div>
+    <h2>Hypertension Questions</h2>
+    <p>Understanding high blood pressure risk and our new prediction feature</p>
+  </div>
+  <div class="faq-container">
+    <div class="faq-col">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-arrow">▼</span>
+          What is Hypertension?
+        </button>
+        <div class="faq-a">
+          <p>Hypertension (high blood pressure) is a condition where the force of blood against your artery walls is consistently too high — typically defined as a systolic pressure ≥130 mmHg or diastolic ≥80 mmHg (AHA guidelines). It's called the "silent killer" because it usually has no symptoms but significantly raises the risk of heart disease, stroke, and kidney damage.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-arrow">▼</span>
+          What are the 3 extra fields for hypertension?
+        </button>
+        <div class="faq-a">
+          <p>Beyond the standard cardiovascular fields, our hypertension assessment asks for three additional inputs:</p>
+          <p><strong>Family History:</strong> Whether parents or siblings have hypertension — this roughly doubles your genetic risk.<br>
+          <strong>Stress Level (1–9):</strong> Chronic stress keeps cortisol elevated, raising blood pressure over time.<br>
+          <strong>Salt Intake:</strong> Sodium causes water retention which increases blood volume and pressure. WHO recommends &lt;5 g/day.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-arrow">▼</span>
+          What dataset was used for hypertension?
+        </button>
+        <div class="faq-a">
+          <p>The hypertension model uses the <strong>Hypertension Risk Prediction Dataset</strong> from Kaggle (ankushpanday1), containing approximately 175,000 records from patients across 175 countries. It includes 23 features such as BMI, blood pressure, cholesterol, stress level, salt intake, family history, glucose, alcohol, smoking, and physical activity. Target variable: <code>Hypertension</code> (High / Low).</p>
+        </div>
+      </div>
+    </div>
+    <div class="faq-col">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-arrow">▼</span>
+          How do I measure my stress level?
+        </button>
+        <div class="faq-a">
+          <p>On a scale of 1–9, rate how stressed you feel on an average day. Think about work pressure, sleep quality, anxiety, and daily worries. As a guide: <strong>1–3</strong> = generally calm, minimal daily stress; <strong>4–6</strong> = moderate stress, occasional difficult days; <strong>7–9</strong> = frequently overwhelmed, poor sleep, constant pressure. Be honest — chronic mild stress often goes underestimated.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-arrow">▼</span>
+          How do I estimate my salt intake?
+        </button>
+        <div class="faq-a">
+          <p>Salt intake is hard to measure precisely, but here's a practical guide:</p>
+          <p><strong>Low (&lt;5 g/day):</strong> Mostly home-cooked meals, rarely add salt, minimal processed food.<br>
+          <strong>Moderate (5–10 g/day):</strong> Mix of home-cooked and processed/restaurant food, occasional salt added.<br>
+          <strong>High (10–15 g/day):</strong> Frequent restaurant meals, regular processed food (chips, instant noodles, pickles), regularly salt food at the table.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-arrow">▼</span>
+          Is hypertension the same as cardiovascular disease?
+        </button>
+        <div class="faq-a">
+          <p>Not exactly, but they're deeply linked. Hypertension (high blood pressure) is a major <em>risk factor</em> for cardiovascular disease — it damages artery walls over time, leading to atherosclerosis, heart attack, and stroke. Our app now predicts both independently, which together give you a more complete picture of your heart health. Many people with cardiovascular disease also have hypertension, and vice versa.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
 function toggleFaq(btn) {
   const item = btn.parentElement;
   const isOpen = item.classList.contains('open');
