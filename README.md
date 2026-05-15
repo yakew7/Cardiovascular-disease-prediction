@@ -67,11 +67,12 @@ Cardiovascular-disease-prediction/
 │   ├── Script.js           # BMI calc, form submit, chatbot, hypertension heuristic
 │   └── Style.css           # All styling
 │
-├── cardio_train.csv        # Raw: Russian cohort (~70k records)
-├── shanxi_cardio.csv       # Raw: Chinese cohort (~19k records)
-├── cardio_clean.csv        # Cleaned output from dataset.py
-├── shanxi_clean.csv        # Cleaned output from dataset.py
-├── combined_clean.csv      # Merged dataset used for model training
+├── cardio_train.csv           # Raw: Russian cohort (~70k records)
+├── shanxi_cardio.csv          # Raw: Chinese cohort (~19k records)
+├── cardio_clean.csv           # Cleaned output from dataset.py
+├── shanxi_clean.csv           # Cleaned output from dataset.py
+├── hypertension_dataset.csv   # Raw: Hypertension Dataset (~175k records)
+├── combined_clean.csv         # Merged dataset used for model training (~88k records)
 │
 ├── vercel.json             # Vercel routing config
 ├── .vercelignore
