@@ -133,6 +133,51 @@
               <div class="bmi-value" id="bmiDisplay">—</div>
             </div>
           </div>
+          <!-- Hypertension optional section -->
+          <div class="hyper-section">
+            <div class="hyper-section-header">
+              <span class="hyper-icon">🩺</span>
+              <div>
+                <strong>Hypertension Risk</strong>
+                <span class="hyper-optional">Optional — fill in for an additional hypertension risk assessment</span>
+              </div>
+            </div>
+            <div class="form-row three">
+              <div class="field-group">
+                <label>Family History of Hypertension?</label>
+                <select name="family_history">
+                  <option value="">— Skip —</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Stress Level <span class="unit">(1–9)</span></label>
+                <select name="stress_level">
+                  <option value="">— Skip —</option>
+                  <option value="1">1 — Very Low</option>
+                  <option value="2">2</option>
+                  <option value="3">3 — Low</option>
+                  <option value="4">4</option>
+                  <option value="5">5 — Moderate</option>
+                  <option value="6">6</option>
+                  <option value="7">7 — High</option>
+                  <option value="8">8</option>
+                  <option value="9">9 — Very High</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Salt Intake <span class="unit">(g/day)</span></label>
+                <select name="salt_intake">
+                  <option value="">— Skip —</option>
+                  <option value="3">Low (&lt; 5 g/day)</option>
+                  <option value="7">Moderate (5–10 g/day)</option>
+                  <option value="12">High (10–15 g/day)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <button type="submit" class="predict-btn">
             <span>Analyze Risk</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -192,6 +237,29 @@
             <div>
               <strong>Physical Activity</strong>
               <p>Are you physically active? Yes if you exercise or walk regularly for at least 30 min/day.</p>
+            </div>
+          </div>
+          <div class="guide-divider">🩺 Hypertension Parameters (Optional)</div>
+          <div class="guide-item">
+            <div class="guide-icon">👨‍👩‍👧</div>
+            <div>
+              <strong>Family History of Hypertension</strong>
+              <p>Do any of your parents or siblings have high blood pressure? Family history is one of the strongest predictors — people with a hypertensive parent have 2× the risk.</p>
+            </div>
+          </div>
+          <div class="guide-item">
+            <div class="guide-icon">😰</div>
+            <div>
+              <strong>Stress Level (1–9)</strong>
+              <p>Rate your average daily stress on a 1–9 scale. Chronic stress raises cortisol and adrenaline, which elevate blood pressure over time. 1 = very relaxed, 9 = severely stressed.</p>
+            </div>
+          </div>
+          <div class="guide-item">
+            <div class="guide-icon">🧂</div>
+            <div>
+              <strong>Salt Intake (g/day)</strong>
+              <p>Estimate your daily sodium intake. WHO recommends under 5 g/day. High salt causes the body to retain water, raising blood pressure. Check food labels — most processed foods are high in sodium.</p>
+              <p><strong>Low:</strong> &lt;5 g/day &nbsp;|&nbsp; <strong>Moderate:</strong> 5–10 g/day &nbsp;|&nbsp; <strong>High:</strong> 10–15 g/day</p>
             </div>
           </div>
         </div>
