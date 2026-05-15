@@ -144,7 +144,30 @@ def vizdata():
         'bmi_neg':  [12, 148, 182,  98, 52, 47],
     }
 
-    return jsonify(cardio_data if dataset == 'cardio' else shanxi_data)
+    hypertension_data = {
+        'total_records': 174982,
+        'age_bins': ['20-25','25-30','30-35','35-40','40-45','45-50','50-55','55-60','60-65','65-70','70-75','75-80'],
+        'age_pos':  [8791, 8781, 8678, 8792, 8624, 8633, 8733, 8802, 8765, 8886, 8741, 8666],
+        'age_neg':  [3356, 3316, 3433, 3403, 3412, 3436, 3542, 3461, 3336, 3310, 3340, 3506],
+        'gender_pos': [62632, 63149],   # Male HTN, Female HTN
+        'gender_neg': [24675, 24526],   # Male Normal, Female Normal
+        'chol_pos': [38200, 44800, 42781],
+        'chol_neg': [14900, 17800, 16501],
+        'family_history_pos': [62923, 62858],  # with FH, without FH → HTN
+        'family_history_neg': [24568, 24633],  # with FH, without FH → Normal
+        'smoke_risk': [62923, 62858],  # kept for fallback
+        'bmi_sample': _bmi_scatter(seed=99),
+        'active_pos': [83800, 41981],
+        'active_neg': [32700, 16501],
+        'stress_pos': [41706, 41870, 42205],   # Low/Med/High stress → HTN
+        'stress_neg': [16280, 16398, 16523],   # Low/Med/High stress → Normal
+        'prevalence': {'high_risk': 125781, 'low_risk': 49201},
+        'bmi_bins': ['<18.5', '18.5-25', '25-30', '30-35', '35-40', '40+'],
+        'bmi_pos':  [2800,  24100, 42500, 31800, 14900, 9681],
+        'bmi_neg':  [1100,   9400, 16600, 12400,  5800, 3901],
+    }
+
+    return jsonify(cardio_data if dataset == 'cardio' else shanxi_data if dataset == 'shanxi' else hypertension_data)
 
 
 def _bmi_scatter(seed=42):
