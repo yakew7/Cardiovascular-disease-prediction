@@ -352,10 +352,17 @@ function showHyperStep(i) {
   const inputBox = document.getElementById('riskInputBox');
   addBotMsg(`<p>${step.question}</p><div class="tip-box">💡 ${step.explain}</div>`);
   setTimeout(() => {
-    const opts = step.options.map(o =>
-      `<button class="ropt-btn" onclick="selectHyperOpt(${JSON.stringify(o.val)}, '${o.label}')">${o.label}</button>`
+    const opts = step.options.map((o, idx) =>
+      `<button class="ropt-btn hyper-opt" data-idx="${idx}">${o.label}</button>`
     ).join('');
     inputBox.innerHTML = `<div class="ropt-row">${opts}</div>`;
+    // Attach listeners directly after rendering
+    inputBox.querySelectorAll('.hyper-opt').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const opt = hyperSteps[hyperStep].options[parseInt(this.dataset.idx)];
+        selectHyperOpt(opt.val, opt.label);
+      });
+    });
   }, 600);
 }
 
