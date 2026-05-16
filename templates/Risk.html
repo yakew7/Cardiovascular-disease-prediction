@@ -7,6 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/Style.css">
+  <script>
+    // Apply saved theme before paint to avoid flash
+    (function(){
+      const t = localStorage.getItem('cardio-theme');
+      if(t) document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
 </head>
 <body class="risk-page">
 
@@ -19,6 +26,7 @@
     <li><a href="/visualize">Visualize</a></li>
     <li><a href="/faq">FAQ</a></li>
   </ul>
+  <button class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">🌙</button>
 </nav>
 
 <div class="risk-layout">
@@ -352,17 +360,10 @@ function showHyperStep(i) {
   const inputBox = document.getElementById('riskInputBox');
   addBotMsg(`<p>${step.question}</p><div class="tip-box">💡 ${step.explain}</div>`);
   setTimeout(() => {
-    const opts = step.options.map((o, idx) =>
-      `<button class="ropt-btn hyper-opt" data-idx="${idx}">${o.label}</button>`
+    const opts = step.options.map(o =>
+      `<button class="ropt-btn" onclick="selectHyperOpt(${JSON.stringify(o.val)}, '${o.label}')">${o.label}</button>`
     ).join('');
     inputBox.innerHTML = `<div class="ropt-row">${opts}</div>`;
-    // Attach listeners directly after rendering
-    inputBox.querySelectorAll('.hyper-opt').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const opt = hyperSteps[hyperStep].options[parseInt(this.dataset.idx)];
-        selectHyperOpt(opt.val, opt.label);
-      });
-    });
   }, 600);
 }
 
@@ -443,6 +444,23 @@ window.onload = () => {
   addBotMsg("Welcome to your <strong>guided cardiovascular risk assessment</strong>. I'll walk you through each health parameter, explain what it means, and how to measure it. Let's begin!");
   setTimeout(() => showStep(0), 1000);
 };
+</script>
+<script>
+(function(){
+  const btn = document.getElementById('themeToggle');
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    if(btn) btn.textContent = t === 'light' ? '🌙' : '☀️';
+    localStorage.setItem('cardio-theme', t);
+  }
+  // Set initial icon
+  const saved = localStorage.getItem('cardio-theme') || 'dark';
+  applyTheme(saved);
+  if(btn) btn.addEventListener('click', function(){
+    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    applyTheme(cur === 'dark' ? 'light' : 'dark');
+  });
+})();
 </script>
 </body>
 </html>

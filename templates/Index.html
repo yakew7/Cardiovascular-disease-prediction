@@ -7,6 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/Style.css">
+  <script>
+    // Apply saved theme before paint to avoid flash
+    (function(){
+      const t = localStorage.getItem('cardio-theme');
+      if(t) document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
 </head>
 <body>
  
@@ -27,6 +34,7 @@
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
     AI Assistant
   </button>
+  <button class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">🌙</button>
 </nav>
  
 <!-- HERO -->
@@ -144,7 +152,7 @@
             </div>
             <div class="form-row three">
               <div class="field-group">
-                <label>Family Hx of Hypertension?</label>
+                <label>Family History of Hypertension?</label>
                 <select name="family_history">
                   <option value="">— Skip —</option>
                   <option value="Yes">Yes</option>
@@ -297,5 +305,22 @@
 </div>
 <button class="chat-fab" id="chatFab" onclick="openChat()">♥</button>
 <script src="/static/Script.js"></script>
+<script>
+(function(){
+  const btn = document.getElementById('themeToggle');
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    if(btn) btn.textContent = t === 'light' ? '🌙' : '☀️';
+    localStorage.setItem('cardio-theme', t);
+  }
+  // Set initial icon
+  const saved = localStorage.getItem('cardio-theme') || 'dark';
+  applyTheme(saved);
+  if(btn) btn.addEventListener('click', function(){
+    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    applyTheme(cur === 'dark' ? 'light' : 'dark');
+  });
+})();
+</script>
 </body>
 </html>

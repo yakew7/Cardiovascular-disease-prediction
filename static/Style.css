@@ -18,6 +18,58 @@
   --radius: 16px;
   --radius-sm: 10px;
   --shadow: 0 4px 32px rgba(0,0,0,0.4);
+  --nav-bg: rgba(8,14,26,0.88);
+  --tip-bg: rgba(59,130,246,0.08);
+  --tip-border: rgba(59,130,246,0.2);
+  --tip-text: #93c5fd;
+  --pulse-border: rgba(229,62,62,0.15);
+  --hero-badge-bg: rgba(229,62,62,0.12);
+  --hero-badge-border: rgba(229,62,62,0.3);
+  --result-high-bg: rgba(239,68,68,0.08);
+  --result-high-border: rgba(239,68,68,0.25);
+  --result-low-bg: rgba(34,197,94,0.08);
+  --result-low-border: rgba(34,197,94,0.25);
+  --hyper-bg: rgba(249,115,22,0.05);
+  --hyper-border: rgba(249,115,22,0.2);
+  --hyper-badge-bg: rgba(249,115,22,0.12);
+  --hyper-badge-border: rgba(249,115,22,0.25);
+  --hyper-reduce-border: rgba(249,115,22,0.15);
+  --faq-open-border: rgba(229,62,62,0.3);
+}
+
+[data-theme="light"] {
+  --bg: #f0f4f8;
+  --bg2: #e2e8f0;
+  --bg3: #d9e2ec;
+  --card: #ffffff;
+  --card2: #f8fafc;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.14);
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #dc2626;
+  --accent2: #ef4444;
+  --accent3: #f87171;
+  --blue: #2563eb;
+  --green: #16a34a;
+  --shadow: 0 4px 32px rgba(0,0,0,0.10);
+  --nav-bg: rgba(240,244,248,0.92);
+  --tip-bg: rgba(37,99,235,0.06);
+  --tip-border: rgba(37,99,235,0.18);
+  --tip-text: #1d4ed8;
+  --pulse-border: rgba(220,38,38,0.12);
+  --hero-badge-bg: rgba(220,38,38,0.08);
+  --hero-badge-border: rgba(220,38,38,0.25);
+  --result-high-bg: rgba(220,38,38,0.06);
+  --result-high-border: rgba(220,38,38,0.2);
+  --result-low-bg: rgba(22,163,74,0.06);
+  --result-low-border: rgba(22,163,74,0.2);
+  --hyper-bg: rgba(249,115,22,0.04);
+  --hyper-border: rgba(249,115,22,0.18);
+  --hyper-badge-bg: rgba(249,115,22,0.10);
+  --hyper-badge-border: rgba(249,115,22,0.22);
+  --hyper-reduce-border: rgba(249,115,22,0.13);
+  --faq-open-border: rgba(220,38,38,0.25);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,7 +97,7 @@ a { color: inherit; text-decoration: none; }
   gap: 2rem;
   padding: 0 2rem;
   height: 60px;
-  background: rgba(8,14,26,0.88);
+  background: var(--nav-bg);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
 }
@@ -139,7 +191,7 @@ a { color: inherit; text-decoration: none; }
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  border: 1px solid rgba(229,62,62,0.15);
+  border: 1px solid var(--pulse-border);
   animation: pulseRing 3s ease infinite;
 }
 .r1 { width: 300px; height: 300px; animation-delay: 0s; }
@@ -157,8 +209,8 @@ a { color: inherit; text-decoration: none; }
 .hero-badge {
   display: inline-block;
   padding: 0.3rem 1rem;
-  background: rgba(229,62,62,0.12);
-  border: 1px solid rgba(229,62,62,0.3);
+  background: var(--hero-badge-bg);
+  border: 1px solid var(--hero-badge-border);
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 600;
@@ -669,13 +721,13 @@ body.risk-page {
 }
 
 .tip-box {
-  background: rgba(59,130,246,0.08);
-  border: 1px solid rgba(59,130,246,0.2);
+  background: var(--tip-bg);
+  border: 1px solid var(--tip-border);
   border-radius: 8px;
   padding: 0.7rem 1rem;
   margin-top: 0.75rem;
   font-size: 0.85rem;
-  color: #93c5fd;
+  color: var(--tip-text);
   line-height: 1.5;
 }
 
@@ -771,13 +823,13 @@ body.risk-page {
 }
 
 .result-card.high {
-  background: rgba(239,68,68,0.08);
-  border: 1px solid rgba(239,68,68,0.25);
+  background: var(--result-high-bg);
+  border: 1px solid var(--result-high-border);
 }
 
 .result-card.low {
-  background: rgba(34,197,94,0.08);
-  border: 1px solid rgba(34,197,94,0.25);
+  background: var(--result-low-bg);
+  border: 1px solid var(--result-low-border);
 }
 
 .result-icon { font-size: 2rem; margin-bottom: 0.5rem; }
@@ -999,7 +1051,7 @@ body.risk-page {
 }
 
 .faq-item.open {
-  border-color: rgba(229,62,62,0.3);
+  border-color: var(--faq-open-border);
 }
 
 .faq-q {
@@ -1101,7 +1153,7 @@ body.risk-page {
 
 .viz-explain {
   background: var(--card);
-  border: 1px solid rgba(59,130,246,0.2);
+  border: 1px solid var(--tip-border);
   border-radius: var(--radius-sm);
   padding: 1.1rem 1.5rem;
   margin-bottom: 1.75rem;
@@ -1111,7 +1163,7 @@ body.risk-page {
   font-family: var(--font-head);
   font-size: 0.95rem;
   margin-bottom: 0.5rem;
-  color: #93c5fd;
+  color: var(--tip-text);
 }
 
 .viz-explain p {
@@ -1185,7 +1237,7 @@ body.risk-page {
 
 /*SCROLLBAR*/
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-track { background: var(--scrollbar-track, var(--bg2)); }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
@@ -1203,19 +1255,9 @@ body.risk-page {
 .hyper-section {
 margin: 1.5rem 0 0;
 padding: 1.25rem 1.5rem;
-background: rgba(249,115,22,0.05);
-border: 1px solid rgba(249,115,22,0.2);
+background: var(--hyper-bg);
+border: 1px solid var(--hyper-border);
 border-radius: 14px;
-}
-/* Make all 3 hypertension dropdowns align at the same height
-   by stretching field-groups and pushing selects to the bottom */
-.hyper-section .form-row.three {
-  align-items: stretch;
-}
-.hyper-section .field-group {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
 }
 .hyper-section-header {
 display: flex;
@@ -1256,15 +1298,15 @@ margin-top: 0.5rem;
 text-align: center;
 margin: 3.5rem 0 2rem;
 padding: 2rem;
-background: rgba(249,115,22,0.05);
-border: 1px solid rgba(249,115,22,0.15);
+background: var(--hyper-bg);
+border: 1px solid var(--hyper-reduce-border);
 border-radius: 16px;
 }
 .hyper-reduce-badge {
 display: inline-block;
-background: rgba(249,115,22,0.12);
+background: var(--hyper-badge-bg);
 color: #f97316;
-border: 1px solid rgba(249,115,22,0.25);
+border: 1px solid var(--hyper-badge-border);
 border-radius: 20px;
 padding: 0.3rem 1rem;
 font-size: 0.82rem;
@@ -1296,3 +1338,76 @@ font-weight: 800;
 margin: 0.5rem 0 0.4rem;
 }
 .faq-hyper-header p { color: var(--muted); }
+/* ── Theme Toggle Button ─────────────────────────────────────────────────── */
+.theme-toggle {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--accent);
+  background: var(--card2);
+}
+
+/* ── Light mode specific overrides ───────────────────────────────────────── */
+[data-theme="light"] .nav {
+  box-shadow: 0 1px 12px rgba(0,0,0,0.08);
+}
+[data-theme="light"] .form-card,
+[data-theme="light"] .guide-card,
+[data-theme="light"] .chart-card,
+[data-theme="light"] .faq-item,
+[data-theme="light"] .reduce-card,
+[data-theme="light"] .chat-widget,
+[data-theme="light"] .rmsg.bot .rmsg-inner {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+[data-theme="light"] .reduce-tag {
+  background: var(--bg3);
+}
+[data-theme="light"] .step-item.active {
+  background: rgba(220,38,38,0.08);
+}
+[data-theme="light"] .ropt-btn {
+  background: var(--bg2);
+}
+[data-theme="light"] .risk-main {
+  background: var(--bg2);
+}
+[data-theme="light"] .faq-section,
+[data-theme="light"] .faq-header {
+  background: var(--bg);
+}
+[data-theme="light"] .faq-header {
+  background: var(--bg2);
+}
+[data-theme="light"] .viz-explain {
+  background: var(--tip-bg);
+}
+[data-theme="light"] .viz-explain h3 {
+  color: var(--tip-text);
+}
+[data-theme="light"] .viz-explain code {
+  background: var(--bg3);
+  color: var(--accent);
+}
+[data-theme="light"] .msg.bot {
+  background: var(--bg2);
+}
+[data-theme="light"] .quick-btns button {
+  background: var(--bg3);
+}
+[data-theme="light"] body.risk-page {
+  background: var(--bg2);
+}

@@ -7,6 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/Style.css">
+  <script>
+    // Apply saved theme before paint to avoid flash
+    (function(){
+      const t = localStorage.getItem('cardio-theme');
+      if(t) document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
 </head>
 <body>
 
@@ -19,6 +26,7 @@
     <li><a href="/visualize">Visualize</a></li>
     <li><a href="/faq" class="active">FAQ</a></li>
   </ul>
+  <button class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">🌙</button>
 </nav>
 
 <section class="faq-section">
@@ -218,6 +226,23 @@ function toggleFaq(btn) {
   document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
   if (!isOpen) item.classList.add('open');
 }
+</script>
+<script>
+(function(){
+  const btn = document.getElementById('themeToggle');
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    if(btn) btn.textContent = t === 'light' ? '🌙' : '☀️';
+    localStorage.setItem('cardio-theme', t);
+  }
+  // Set initial icon
+  const saved = localStorage.getItem('cardio-theme') || 'dark';
+  applyTheme(saved);
+  if(btn) btn.addEventListener('click', function(){
+    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    applyTheme(cur === 'dark' ? 'light' : 'dark');
+  });
+})();
 </script>
 </body>
 </html>
