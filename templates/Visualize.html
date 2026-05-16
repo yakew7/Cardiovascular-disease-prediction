@@ -8,6 +8,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/Style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script>
+    (function(){
+      var t = localStorage.getItem('cardioai-theme') ||
+              (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
 </head>
 <body>
 <nav class="nav">
@@ -19,6 +26,7 @@
     <li><a href="/visualize" class="active">Visualize</a></li>
     <li><a href="/faq">FAQ</a></li>
   </ul>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" onclick="(function(){var r=document.documentElement,c=r.getAttribute('data-theme'),d=c==='dark'||(!c&&window.matchMedia('(prefers-color-scheme:dark)').matches),n=d?'light':'dark';r.setAttribute('data-theme',n);localStorage.setItem('cardioai-theme',n);var b=document.getElementById('themeToggle');if(b)b.textContent=n==='dark'?'🌙':'☀️';})()">🌙</button>
   <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" onclick="toggleMobileNav(this)">
     <span></span><span></span><span></span>
   </button>
@@ -170,6 +178,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }, true);
 });
+</script>
+<script>
+(function(){
+  var saved = localStorage.getItem('cardioai-theme');
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var t = saved || (prefersDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', t);
+  document.addEventListener('DOMContentLoaded', function(){
+    var b = document.getElementById('themeToggle');
+    if(b) b.textContent = t === 'dark' ? '🌙' : '☀️';
+  });
+})();
 </script>
 </body>
 </html>

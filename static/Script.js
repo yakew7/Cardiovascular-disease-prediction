@@ -1,3 +1,26 @@
+// ── Theme toggle ──────────────────────────────────────────────────────────
+function toggleTheme() {
+  const root = document.documentElement;
+  const current = root.getAttribute('data-theme');
+  const isDark = current === 'dark' || (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const next = isDark ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  localStorage.setItem('cardioai-theme', next);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = next === 'dark' ? '🌙' : '☀️';
+}
+
+(function initTheme() {
+  const saved = localStorage.getItem('cardioai-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+  document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = theme === 'dark' ? '🌙' : '☀️';
+  });
+})();
+
 // ── BMI live preview ──────────────────────────────────────────────────────
 const heightEl = document.querySelector('[name="height"]');
 const weightEl = document.querySelector('[name="weight"]');
@@ -114,8 +137,8 @@ if (predictForm) {
 }
 
 // ── Chatbot ───────────────────────────────────────────────────────────────
-function openChat() { document.getElementById('chatWidget').classList.remove('hidden'); document.getElementById('chatFab').style.display='none'; }
-function closeChat() { document.getElementById('chatWidget').classList.add('hidden'); document.getElementById('chatFab').style.display='flex'; }
+function openChat() { document.getElementById('chatWidget').classList.remove('hidden'); document.getElementById('chatFab').classList.add('fab-hidden'); }
+function closeChat() { document.getElementById('chatWidget').classList.add('hidden'); document.getElementById('chatFab').classList.remove('fab-hidden'); }
 function quickMsg(text) { document.getElementById('chatInput').value=text; sendChat(); }
 function addChatMsg(html, role) {
   const box = document.getElementById('chatMessages');
