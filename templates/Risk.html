@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Know My Risk — CardioAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/Style.css">
+</head>
+<body class="risk-page">
+
+<nav class="nav">
+  <a href="/" class="nav-logo"><span class="logo-icon">♥</span><span>CardioAI</span></a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/risk" class="active">Know My Risk</a></li>
+    <li><a href="/reduce">Reduce Risk</a></li>
+    <li><a href="/visualize">Visualize</a></li>
+    <li><a href="/faq">FAQ</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" onclick="toggleMobileNav(this)">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="/">Home</a>
+  <a href="/risk" class="active">Know My Risk</a>
+  <a href="/reduce">Reduce Risk</a>
+  <a href="/visualize">Visualize</a>
+  <a href="/faq">FAQ</a>
+</div>
+
+<div class="risk-layout">
+  <!-- LEFT PANEL -->
+  <div class="risk-sidebar">
+    <div class="risk-sidebar-inner">
+      <div class="sidebar-logo">🫀</div>
+      <h2>Guided Risk<br>Assessment</h2>
+      <p>Answer questions one by one. We'll guide you through each parameter and explain how to measure it.</p>
+      <div class="progress-steps" id="progressSteps">
+        <div class="step-item active" data-step="0">Age</div>
+        <div class="step-item" data-step="1">Gender</div>
+        <div class="step-item" data-step="2">Height</div>
+        <div class="step-item" data-step="3">Weight</div>
+        <div class="step-item" data-step="4">Blood Pressure (Hi)</div>
+        <div class="step-item" data-step="5">Blood Pressure (Lo)</div>
+        <div class="step-item" data-step="6">Cholesterol</div>
+        <div class="step-item" data-step="7">Glucose</div>
+        <div class="step-item" data-step="8">Smoking</div>
+        <div class="step-item" data-step="9">Alcohol</div>
+        <div class="step-item" data-step="10">Physical Activity</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CHAT AREA -->
+  <div class="risk-main">
+    <div class="risk-chat" id="riskChat">
+      <!-- Messages appear here -->
+    </div>
+    <div class="risk-input-area" id="riskInputArea">
+      <div id="riskInputBox"></div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/Script.js"></script>
+<script>
+// Step-by-step guided flow
+const steps = [
+  {
+    key: 'age',
+    label: 'Age',
+    question: "Let's start! 👋 What is your <strong>age</strong> in years?",
+    explain: "Age is a key risk factor. Cardiovascular risk increases significantly after age 40.",
+    type: 'number', min: 1, max: 120, unit: 'years', placeholder: 'e.g. 45'
+  },
+  {
+    key: 'gender',
+    label: 'Gender',
+    question: "What is your <strong>biological sex</strong>?",
+    explain: "Men tend to develop cardiovascular disease earlier than women. Hormonal differences affect heart risk.",
+    type: 'select', options: [{val:1, label:'Male'}, {val:2, label:'Female'}]
+  },
+  {
+    key: 'height',
+    label: 'Height',
+    question: "What is your <strong>height</strong>?",
+    explain: "Height is used to calculate your BMI. Measure with a measuring tape against a wall, standing straight.",
+    type: 'number', min: 50, max: 250, unit: 'cm', placeholder: 'e.g. 170'
+  },
+  {
+    key: 'weight',
+    label: 'Weight',
+    question: "What is your <strong>weight</strong>?",
+    explain: "Measure on a flat weighing scale in the morning before eating. Used to calculate your BMI.",
+    type: 'number', min: 10, max: 300, unit: 'kg', placeholder: 'e.g. 70'
+  },
+  {
+    key: 'ap_hi',
+    label: 'Blood Pressure (Hi)',
+    question: "What is your <strong>systolic blood pressure</strong> (upper number)?",
+    explain: "Measure with a blood pressure machine. The upper number is the systolic pressure — the force when your heart beats. Normal is around 120.",
+    type: 'number', min: 60, max: 300, unit: 'mmHg', placeholder: 'e.g. 120'
+  },
+  {
+    key: 'ap_lo',
+    label: 'Blood Pressure (Lo)',
+    question: "What is your <strong>diastolic blood pressure</strong> (lower number)?",
+    explain: "The diastolic number is the pressure between heartbeats. Normal is around 80. Both numbers come from the same BP reading.",
+    type: 'number', min: 40, max: 200, unit: 'mmHg', placeholder: 'e.g. 80'
+  },
+  {
+    key: 'cholesterol',
+    label: 'Cholesterol',
+    question: "What is your <strong>cholesterol level</strong> from your last blood test?",
+    explain: "A lipid panel blood test gives your total cholesterol. If you don't have a recent test, visit a clinic — it's a simple blood draw. Select the range that matches your result:",
+    type: 'select', options: [
+      {val:1, label:'1 — Normal  (< 200 mg/dL)'},
+      {val:2, label:'2 — Above Normal  (200–239 mg/dL)'},
+      {val:3, label:'3 — High  (240+ mg/dL)'}
+    ]
+  },
+  {
+    key: 'gluc',
+    label: 'Glucose',
+    question: "What is your <strong>fasting blood glucose</strong> level?",
+    explain: "A fasting blood sugar test checks for diabetes — done after not eating for 8 hours. Select the range that matches your reading:",
+    type: 'select', options: [
+      {val:1, label:'1 — Normal  (< 100 mg/dL)'},
+      {val:2, label:'2 — Pre-diabetic  (100–125 mg/dL)'},
+      {val:3, label:'3 — Diabetic range  (126+ mg/dL)'}
+    ]
+  },
+  {
+    key: 'smoke',
+    label: 'Smoking',
+    question: "Do you currently <strong>smoke</strong>?",
+    explain: "Smoking significantly raises cardiovascular risk. Even light smoking increases the chance of heart disease.",
+    type: 'select', options: [{val:0, label:'No'}, {val:1, label:'Yes'}]
+  },
+  {
+    key: 'alco',
+    label: 'Alcohol',
+    question: "Do you consume <strong>alcohol</strong> regularly?",
+    explain: "Regular heavy drinking raises blood pressure and strains the heart. Occasional moderate drinking is usually classified as No.",
+    type: 'select', options: [{val:0, label:'No / Rarely'}, {val:1, label:'Yes, regularly'}]
+  },
+  {
+    key: 'active',
+    label: 'Physical Activity',
+    question: "Are you <strong>physically active</strong>?",
+    explain: "Physical activity means at least 30 minutes of walking, exercise, or sport most days of the week.",
+    type: 'select', options: [{val:1, label:'Yes, I exercise regularly'}, {val:0, label:'No, mostly sedentary'}]
+  }
+];
+
+let currentStep = 0;
+const answers = {};
+
+function addBotMsg(html, delay = 0) {
+  setTimeout(() => {
+    const chat = document.getElementById('riskChat');
+    const div = document.createElement('div');
+    div.className = 'rmsg bot';
+    div.innerHTML = `<div class="rmsg-inner">${html}</div>`;
+    chat.appendChild(div);
+    setTimeout(() => div.classList.add('visible'), 50);
+    chat.scrollTop = chat.scrollHeight;
+  }, delay);
+}
+
+function addUserMsg(text) {
+  const chat = document.getElementById('riskChat');
+  const div = document.createElement('div');
+  div.className = 'rmsg user';
+  div.innerHTML = `<div class="rmsg-inner">${text}</div>`;
+  chat.appendChild(div);
+  setTimeout(() => div.classList.add('visible'), 50);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function showStep(i) {
+  // Update sidebar
+  document.querySelectorAll('.step-item').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.className = 'step-item' + (s < i ? ' done' : s === i ? ' active' : '');
+  });
+
+  const step = steps[i];
+  const inputBox = document.getElementById('riskInputBox');
+
+  // Show question + explanation
+  addBotMsg(`<p>${step.question}</p><div class="tip-box">💡 ${step.explain}</div>`);
+
+  // Render input
+  setTimeout(() => {
+    if (step.type === 'number') {
+      inputBox.innerHTML = `
+        <div class="rinput-row">
+          <input id="riskNum" type="number" min="${step.min}" max="${step.max}" placeholder="${step.placeholder}" class="rinput">
+          <span class="rinput-unit">${step.unit}</span>
+          <button class="rnext-btn" onclick="submitStep()">Next →</button>
+        </div>`;
+      document.getElementById('riskNum').focus();
+      document.getElementById('riskNum').onkeydown = e => { if(e.key==='Enter') submitStep(); };
+    } else {
+      const opts = step.options.map(o =>
+        `<button class="ropt-btn" onclick="selectOpt(${o.val}, '${o.label}')">${o.label}</button>`
+      ).join('');
+      inputBox.innerHTML = `<div class="ropt-row">${opts}</div>`;
+    }
+  }, 600);
+}
+
+function selectOpt(val, label) {
+  answers[steps[currentStep].key] = val;
+  addUserMsg(label);
+  document.getElementById('riskInputBox').innerHTML = '';
+  currentStep++;
+  if (currentStep < steps.length) {
+    setTimeout(() => showStep(currentStep), 700);
+  } else {
+    submitAll();
+  }
+}
+
+function submitStep() {
+  const inp = document.getElementById('riskNum');
+  if (!inp || !inp.value) return;
+  const val = parseFloat(inp.value);
+  answers[steps[currentStep].key] = val;
+  addUserMsg(`${val} ${steps[currentStep].unit || ''}`);
+  document.getElementById('riskInputBox').innerHTML = '';
+  currentStep++;
+  if (currentStep < steps.length) {
+    // Auto BMI hint after weight
+    if (steps[currentStep-1].key === 'weight' && answers.height) {
+      const bmi = (answers.weight / ((answers.height/100)**2)).toFixed(1);
+      addBotMsg(`<p>Your <strong>BMI is ${bmi}</strong>. ${bmi < 18.5 ? 'You are underweight.' : bmi < 25 ? 'That\'s a healthy BMI!' : bmi < 30 ? 'You are slightly overweight.' : 'BMI is in the obese range — this raises heart risk.'}</p>`, 300);
+    }
+    setTimeout(() => showStep(currentStep), 700);
+  } else {
+    submitAll();
+  }
+}
+
+async function submitAll() {
+  addBotMsg('<p>Thanks! Analyzing your cardiovascular risk now... 🔍</p>');
+  document.getElementById('riskInputBox').innerHTML = `<div class="analyzing">
+    <div class="analyze-spinner"></div>
+    <span>Running ML model...</span>
+  </div>`;
+
+  // Calculate BMI
+  answers.bmi = answers.weight / ((answers.height / 100) ** 2);
+
+  try {
+    const res = await fetch('/predict', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(answers)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({}));
+      addBotMsg('<p style="color:#ef4444">⚠️ Server error: ' + (err.error||'Unknown error') + '. Make sure app.py is running.</p>');
+      document.getElementById('riskInputBox').innerHTML='';
+      return;
+    }
+    const data = await res.json();
+    showResult(data);
+  } catch(e) {
+    addBotMsg('<p style="color:#ef4444">⚠️ Could not reach the server. Make sure <code>app.py</code> is running on port 5000.<br>The model requires the Flask backend — it cannot predict without it.</p>');
+    document.getElementById('riskInputBox').innerHTML='';
+  }
+}
+
+function showResult(data) {
+  document.getElementById('riskInputBox').innerHTML = '';
+  const isHigh = data.prediction === 1;
+  const prob = data.confidence_pct != null ? data.confidence_pct : Math.round((data.probability||0) * 100);
+
+  addBotMsg(`
+    <div class="result-card ${isHigh ? 'high' : 'low'}">
+      <div class="result-icon">${isHigh ? '⚠️' : '✅'}</div>
+      <div class="result-label">${isHigh ? 'High Cardiovascular Risk' : 'Low Cardiovascular Risk'}</div>
+      <div class="result-prob">
+        <div class="prob-bar"><div class="prob-fill" style="width:${prob}%;background:${isHigh?'#ef4444':'#22c55e'}"></div></div>
+        <span>${prob}% risk score</span>
+      </div>
+      <p>${isHigh
+        ? 'Your parameters suggest elevated cardiovascular risk. Please consult a cardiologist and review our risk reduction guide.'
+        : 'Your parameters suggest low cardiovascular risk. Keep up healthy habits!'
+      }</p>
+      <a href="/reduce" class="result-link">View ways to reduce risk →</a>
+    </div>`, 500);
+
+  // Ask if they want hypertension assessment
+  setTimeout(() => {
+    addBotMsg(`<p>Would you also like to check your <strong>hypertension (high blood pressure) risk</strong>? I just need 3 more quick questions. 🩺</p>`);
+    const inputBox = document.getElementById('riskInputBox');
+    inputBox.innerHTML = `<div class="ropt-row">
+      <button class="ropt-btn" onclick="startHyperFlow()">Yes, check hypertension risk</button>
+      <button class="ropt-btn" onclick="skipHyper()">No thanks, I'm done</button>
+    </div>`;
+  }, 1500);
+
+  document.querySelectorAll('.step-item').forEach(el => el.className = 'step-item done');
+}
+
+// ── Hypertension follow-up flow ───────────────────────────────────────────
+const hyperSteps = [
+  {
+    key: 'family_history',
+    question: "Does anyone in your immediate family (parents or siblings) have <strong>high blood pressure</strong>?",
+    explain: "Family history of hypertension roughly doubles your risk. Genetics strongly influence how your body regulates blood pressure.",
+    type: 'select',
+    options: [{val:'Yes', label:'Yes, they do'}, {val:'No', label:'No / Not sure'}]
+  },
+  {
+    key: 'stress_level',
+    question: "How would you rate your average <strong>daily stress level</strong>?",
+    explain: "Chronic stress raises cortisol and adrenaline, which keeps your blood pressure elevated over time. Rate honestly — 1 is very relaxed, 9 is severely stressed.",
+    type: 'select',
+    options: [
+      {val:2, label:'1–3 — Low stress'},
+      {val:5, label:'4–6 — Moderate stress'},
+      {val:8, label:'7–9 — High stress'}
+    ]
+  },
+  {
+    key: 'salt_intake',
+    question: "How much <strong>salt</strong> do you typically consume per day?",
+    explain: "High sodium causes water retention, which raises blood pressure. WHO recommends under 5 g/day. If you eat a lot of processed food, restaurant food, or add salt to meals, that's 'High'.",
+    type: 'select',
+    options: [
+      {val:3,  label:'Low — mostly home-cooked, little salt (< 5 g/day)'},
+      {val:7,  label:'Moderate — some processed food (5–10 g/day)'},
+      {val:12, label:'High — lots of processed / restaurant food (10–15 g/day)'}
+    ]
+  }
+];
+
+let hyperStep = 0;
+const hyperAnswers = {};
+
+function startHyperFlow() {
+  document.getElementById('riskInputBox').innerHTML = '';
+  hyperStep = 0;
+  addBotMsg(`<p>Great! Just 3 quick questions about your hypertension risk. 🩺</p>`);
+  setTimeout(() => showHyperStep(0), 700);
+}
+
+function skipHyper() {
+  document.getElementById('riskInputBox').innerHTML = '';
+  addBotMsg(`<p>No problem! You can always check our <a href="/reduce">Reduce Risk guide</a> for tips. Take care! 💙</p>`);
+}
+
+function showHyperStep(i) {
+  const step = hyperSteps[i];
+  const inputBox = document.getElementById('riskInputBox');
+  addBotMsg(`<p>${step.question}</p><div class="tip-box">💡 ${step.explain}</div>`);
+  setTimeout(() => {
+    const opts = step.options.map(o =>
+      `<button class="ropt-btn" onclick="selectHyperOpt(${JSON.stringify(o.val)}, '${o.label}')">${o.label}</button>`
+    ).join('');
+    inputBox.innerHTML = `<div class="ropt-row">${opts}</div>`;
+  }, 600);
+}
+
+function selectHyperOpt(val, label) {
+  hyperAnswers[hyperSteps[hyperStep].key] = val;
+  addUserMsg(label);
+  document.getElementById('riskInputBox').innerHTML = '';
+  hyperStep++;
+  if (hyperStep < hyperSteps.length) {
+    setTimeout(() => showHyperStep(hyperStep), 700);
+  } else {
+    showHyperResult();
+  }
+}
+
+function calcHypertensionRiskGuided(h, cardioAnswers) {
+  const ap_hi  = parseFloat(cardioAnswers.ap_hi  || 0);
+  const ap_lo  = parseFloat(cardioAnswers.ap_lo  || 0);
+  const bmi    = parseFloat(cardioAnswers.weight || 70) / ((parseFloat(cardioAnswers.height || 170) / 100) ** 2);
+  const age    = parseFloat(cardioAnswers.age    || 0);
+  const smoke  = parseInt(cardioAnswers.smoke    || 0);
+  const alco   = parseInt(cardioAnswers.alco     || 0);
+  const active = parseInt(cardioAnswers.active   || 1);
+  const chol   = parseInt(cardioAnswers.cholesterol || 1);
+
+  let score = 0;
+  if (ap_hi >= 130) score += 2;
+  if (ap_hi >= 140) score += 2;
+  if (ap_hi >= 160) score += 1;
+  if (ap_lo >= 85)  score += 1;
+  if (ap_lo >= 90)  score += 1;
+  if (bmi >= 25) score += 1;
+  if (bmi >= 30) score += 1;
+  if (age >= 45) score += 1;
+  if (age >= 55) score += 1;
+  if (age >= 65) score += 1;
+  if (smoke  === 1) score += 1;
+  if (alco   === 1) score += 1;
+  if (active === 0) score += 1;
+  if (chol   >= 2)  score += 1;
+  if (h.family_history === 'Yes') score += 2;
+  const stress = parseFloat(h.stress_level || 0);
+  if (stress >= 7)  score += 2;
+  else if (stress >= 4) score += 1;
+  const salt = parseFloat(h.salt_intake || 0);
+  if (salt >= 10)   score += 2;
+  else if (salt >= 5) score += 1;
+
+  const prob = Math.min(0.95, Math.max(0.04, score / 22));
+  return { prediction: score >= 7 ? 1 : 0, confidence_pct: Math.round(prob * 100) };
+}
+
+function showHyperResult() {
+  document.getElementById('riskInputBox').innerHTML = '';
+  const result = calcHypertensionRiskGuided(hyperAnswers, answers);
+  const isHigh = result.prediction === 1;
+  const prob = result.confidence_pct;
+  const col = isHigh ? '#f97316' : '#22c55e';
+
+  addBotMsg(`
+    <div class="result-card ${isHigh ? 'high' : 'low'}" style="border-color:${col}33">
+      <div class="result-icon">${isHigh ? '⚠️' : '✅'}</div>
+      <div class="result-label" style="color:${col}">${isHigh ? 'Elevated Hypertension Risk' : 'Low Hypertension Risk'}</div>
+      <div class="result-prob">
+        <div class="prob-bar"><div class="prob-fill" style="width:${prob}%;background:${col}"></div></div>
+        <span>${prob}% risk score</span>
+      </div>
+      <p>${isHigh
+        ? 'Your inputs suggest elevated hypertension risk. Key actions: reduce salt intake, manage stress, exercise regularly, and check your BP at least monthly.'
+        : 'Your hypertension parameters look favourable. Keep monitoring your blood pressure and maintaining low-salt, active habits!'
+      }</p>
+      <a href="/reduce" class="result-link">See hypertension reduction tips →</a>
+    </div>`, 500);
+}
+
+// Start
+window.onload = () => {
+  addBotMsg("Welcome to your <strong>guided cardiovascular risk assessment</strong>. I'll walk you through each health parameter, explain what it means, and how to measure it. Let's begin!");
+  setTimeout(() => showStep(0), 1000);
+};
+</script>
+<script>
+function toggleMobileNav(btn) {
+  var nav = document.getElementById('mobileNav');
+  var open = nav.classList.toggle('open');
+  btn.classList.toggle('is-open', open);
+  btn.setAttribute('aria-expanded', open);
+}
+// Close drawer on link tap or outside tap
+document.addEventListener('DOMContentLoaded', function() {
+  var nav = document.getElementById('mobileNav');
+  var btn = document.getElementById('hamburger');
+  if (!nav) return;
+  nav.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      nav.classList.remove('open');
+      if (btn) { btn.classList.remove('is-open'); btn.setAttribute('aria-expanded','false'); }
+    });
+  });
+  document.addEventListener('click', function(e) {
+    if (!nav.contains(e.target) && !btn.contains(e.target)) {
+      nav.classList.remove('open');
+      btn.classList.remove('is-open');
+      btn.setAttribute('aria-expanded','false');
+    }
+  }, true);
+});
+</script>
+</body>
+</html>
