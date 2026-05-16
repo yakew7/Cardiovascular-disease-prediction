@@ -1190,78 +1190,71 @@ body.risk-page {
 ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
 /*RESPONSIVE*/
-/* ── Tablet (≤900px) ───────────────────────────────────────────────────────── */
+/* ── Tablet ≤900px ─────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .predict-grid { grid-template-columns: 1fr; }
-  .charts-grid { grid-template-columns: 1fr; }
+  .predict-grid    { grid-template-columns: 1fr; }
+  .charts-grid     { grid-template-columns: 1fr; }
   .chart-card.wide { grid-column: auto; }
-  .faq-container { grid-template-columns: 1fr; }
-  .risk-layout { grid-template-columns: 1fr; }
-  .risk-sidebar { display: none; }
-  .nav-links { display: none; }
-  /* Hamburger visible on tablet/mobile */
-  .hamburger { display: flex; }
+  .faq-container   { grid-template-columns: 1fr; }
+  .risk-layout     { grid-template-columns: 1fr; }
+  .risk-sidebar    { display: none; }
+  .nav-links       { display: none; }
+  .hamburger       { display: flex; }
 }
 
-/* ── Mobile (≤600px) ───────────────────────────────────────────────────────── */
+/* ── Mobile ≤600px ─────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  /* Nav */
-  .nav { padding: 0 1rem; gap: 0.75rem; }
-  .chatbot-btn span { display: none; }   /* icon only on tiny screens */
-  .chatbot-btn { padding: 0.4rem 0.6rem; min-width: 36px; justify-content: center; }
+  .nav { padding: 0 1rem; gap: 0.5rem; }
 
-  /* Hero */
-  .hero, .page-hero { padding: 90px 1rem 40px; }
-  .hero-title { font-size: 2.2rem; }
+  /* Hide AI Assistant text on tiny screens, keep icon */
+  .chatbot-btn .btn-label { display: none; }
+  .chatbot-btn { padding: 0.4rem 0.65rem; }
 
-  /* Form — stack all rows to 1 col */
+  /* Stack ALL form rows to single column */
   .form-row,
-  .form-row.three { grid-template-columns: 1fr; }
+  .form-row.three { grid-template-columns: 1fr !important; }
 
-  /* Hyper section — stack the 3 dropdowns vertically */
-  .hyper-section .form-row.three { grid-template-columns: 1fr; }
-  .hyper-section { padding: 1rem; }
-  .hyper-section-header { gap: 0.5rem; }
+  /* Hyper section: full width, no overflow */
+  .hyper-section { padding: 1rem; overflow: hidden; }
+  .hyper-section .form-row.three { grid-template-columns: 1fr !important; }
 
-  /* Predict form padding */
+  /* Padding adjustments */
   .predict-form { padding: 1rem; }
-  .form-card, .guide-card { border-radius: 12px; }
+  .container    { padding: 0 1rem; }
+  .hero, .page-hero { padding: 90px 1rem 40px; }
+  .hero-title   { font-size: 2rem; }
 
-  /* Containers */
-  .container { padding: 0 1rem; }
-  .predict-section { padding: 0 0 3rem; }
-
-  /* Reduce cards */
+  /* Reduce cards single col */
   .reduce-grid { grid-template-columns: 1fr; }
 
-  /* Viz */
+  /* Viz controls stack */
   .viz-controls { flex-direction: column; align-items: stretch; }
   .viz-control-group { flex-direction: column; align-items: flex-start; }
   .viz-control-group select { width: 100%; }
 
-  /* Chat widget */
+  /* Chat widget full width */
   .chat-widget { width: calc(100vw - 2rem); right: 1rem; bottom: 5rem; }
 
-  /* FAQ */
-  .faq-header { padding: 2rem 1rem 1.5rem; }
+  /* FAQ padding */
+  .faq-header    { padding: 2rem 1rem 1.5rem; }
   .faq-container { padding: 1.5rem 1rem 3rem; }
 }
 
-/* ── Mobile nav drawer ──────────────────────────────────────────────────────── */
+/* ── Hamburger button (hidden on desktop) ──────────────────────────────────── */
 .hamburger {
   display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 5px;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   background: var(--card);
   border: 1px solid var(--border2);
   border-radius: 8px;
   cursor: pointer;
-  margin-left: auto;
   flex-shrink: 0;
+  padding: 0;
 }
 .hamburger span {
   display: block;
@@ -1271,61 +1264,65 @@ body.risk-page {
   border-radius: 2px;
   transition: all 0.25s;
 }
+.hamburger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.is-open span:nth-child(2) { opacity: 0; }
+.hamburger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Mobile nav drawer panel */
+/* ── Mobile nav drawer ─────────────────────────────────────────────────────── */
 .mobile-nav {
   display: none;
   position: fixed;
   top: 60px; left: 0; right: 0;
   background: var(--card);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border2);
   z-index: 99;
-  padding: 1rem;
+  padding: 0.75rem;
   flex-direction: column;
-  gap: 0.4rem;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-  animation: slideDown 0.2s ease;
+  gap: 0.25rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  animation: drawerDown 0.2s ease;
 }
 .mobile-nav.open { display: flex; }
 
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
+@keyframes drawerDown {
+  from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 .mobile-nav a {
-  padding: 0.75rem 1rem;
+  display: block;
+  padding: 0.8rem 1rem;
   border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 500;
   color: var(--muted);
-  transition: all 0.2s;
-  border: 1px solid transparent;
+  transition: all 0.15s;
 }
-.mobile-nav a:hover,
-.mobile-nav a.active {
-  background: var(--bg2);
-  color: var(--text);
-  border-color: var(--border);
-}
-.mobile-nav a.active { color: var(--accent2); }
+.mobile-nav a:hover  { background: var(--bg2); color: var(--text); }
+.mobile-nav a.active { background: rgba(229,62,62,0.1); color: var(--accent2); font-weight: 600; }
 /* ── Hypertension Optional Section (Index.html) ─────────────────────────── */
 .hyper-section {
-margin: 1.5rem 0 0;
-padding: 1.25rem 1.5rem;
-background: rgba(249,115,22,0.05);
-border: 1px solid rgba(249,115,22,0.2);
-border-radius: 14px;
+  margin: 1.5rem 0 0;
+  padding: 1.25rem 1.5rem;
+  background: rgba(249,115,22,0.05);
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 14px;
+  overflow: hidden;
 }
-/* All 3 hyper dropdowns aligned — selects sit at same row */
+/* Align all 3 hypertension dropdowns at the same baseline */
 .hyper-section .form-row.three {
-  align-items: stretch;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
 }
 .hyper-section .field-group {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  min-width: 0;
+}
+.hyper-section .field-group label {
+  white-space: normal;
+  word-break: break-word;
 }
 .hyper-section-header {
 display: flex;
