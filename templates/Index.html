@@ -7,13 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/Style.css">
-  <script>
-    // Apply saved theme before paint to avoid flash
-    (function(){
-      const t = localStorage.getItem('cardio-theme');
-      if(t) document.documentElement.setAttribute('data-theme', t);
-    })();
-  </script>
 </head>
 <body>
  
@@ -34,7 +27,17 @@
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
     AI Assistant
   </button>
-  <button class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">🌙</button>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" onclick="toggleMobileNav()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/" class="active">Home</a>
+  <a href="/risk">Know My Risk</a>
+  <a href="/reduce">Reduce Risk</a>
+  <a href="/visualize">Visualize</a>
+  <a href="/faq">FAQ</a>
 </nav>
  
 <!-- HERO -->
@@ -251,7 +254,7 @@
           <div class="guide-item">
             <div class="guide-icon">👨‍👩‍👧</div>
             <div>
-              <strong>Family History of Hypertension</strong>
+              <strong>Family Hx of Hypertension</strong>
               <p>Do any of your parents or siblings have high blood pressure? Family history is one of the strongest predictors — people with a hypertensive parent have 2× the risk.</p>
             </div>
           </div>
@@ -305,22 +308,31 @@
 </div>
 <button class="chat-fab" id="chatFab" onclick="openChat()">♥</button>
 <script src="/static/Script.js"></script>
+
 <script>
-(function(){
-  const btn = document.getElementById('themeToggle');
-  function applyTheme(t){
-    document.documentElement.setAttribute('data-theme', t);
-    if(btn) btn.textContent = t === 'light' ? '🌙' : '☀️';
-    localStorage.setItem('cardio-theme', t);
-  }
-  // Set initial icon
-  const saved = localStorage.getItem('cardio-theme') || 'dark';
-  applyTheme(saved);
-  if(btn) btn.addEventListener('click', function(){
-    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
-    applyTheme(cur === 'dark' ? 'light' : 'dark');
+function toggleMobileNav() {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('hamburger');
+  const open = nav.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}
+// Close drawer when a link is tapped
+document.addEventListener('DOMContentLoaded', function() {
+  const mNav = document.getElementById('mobileNav');
+  if (mNav) mNav.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      mNav.classList.remove('open');
+    });
   });
-})();
+  // Close on outside tap
+  document.addEventListener('click', function(e) {
+    const btn = document.getElementById('hamburger');
+    const nav = document.getElementById('mobileNav');
+    if (nav && btn && !nav.contains(e.target) && !btn.contains(e.target)) {
+      nav.classList.remove('open');
+    }
+  });
+});
 </script>
 </body>
 </html>
