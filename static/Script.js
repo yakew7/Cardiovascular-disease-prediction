@@ -124,20 +124,35 @@ function addChatMsg(html, role) {
 }
 
 const CHAT_RULES = [
-  { keys:['know','risk','predict','assessment'], reply:"Head to <a href='/risk'>Know My Risk</a> for a guided step-by-step assessment. I'll ask about your age, blood pressure, cholesterol, and lifestyle — then give you an instant ML-powered result." },
-  { keys:['reduce','lower','improve','prevent'], reply:"The biggest levers for heart health: <strong>exercise</strong> (150 min/week), <strong>quit smoking</strong>, <strong>heart-healthy diet</strong> (Mediterranean/DASH), and <strong>manage BP</strong>. See the full guide on <a href='/reduce'>Reduce Risk</a>." },
-  { keys:['bmi','body mass'], reply:"<strong>BMI = weight(kg) ÷ height(m)²</strong>. Ranges: &lt;18.5 Underweight · 18.5–24.9 Normal · 25–29.9 Overweight · 30+ Obese. The form calculates it automatically." },
-  { keys:['blood pressure','bp','systolic','diastolic','hypertension','high blood pressure'], reply:"Blood pressure: <strong>systolic (ap_hi)</strong> = pressure when heart beats · <strong>diastolic (ap_lo)</strong> = pressure between beats. Normal: &lt;120/80. High: ≥130/80 mmHg. We now support hypertension risk prediction — fill in the optional section on the home page!" },
-  { keys:['cholesterol','ldl','lipid'], reply:"Cholesterol: <strong>1-Normal</strong> &lt;200 mg/dL · <strong>2-Above Normal</strong> 200–239 · <strong>3-High</strong> 240+. Get a fasting lipid panel test from your doctor." },
-  { keys:['glucose','blood sugar','diabetes'], reply:"Fasting glucose: <strong>1-Normal</strong> &lt;100 mg/dL · <strong>2-Pre-diabetic</strong> 100–125 · <strong>3-Diabetic</strong> 126+. Both pre-diabetes and diabetes raise heart risk significantly." },
-  { keys:['smoke','smoking','cigarette'], reply:"Smoking is one of the top cardiovascular risk factors. <strong>Within 1 year of quitting, heart disease risk drops by half.</strong>" },
-  { keys:['stress'], reply:"Chronic stress raises cortisol which elevates blood pressure over time. On our hypertension form, rate your stress 1–9 where 9 is severely stressed. Meditation, breathwork, and exercise all help lower it." },
-  { keys:['salt','sodium'], reply:"WHO recommends under <strong>5 g of salt per day</strong>. High sodium causes the body to retain water, raising blood pressure. Most processed and restaurant food is very high in salt — cooking fresh helps a lot." },
-  { keys:['family history','hereditary','genetic'], reply:"Family history of hypertension roughly <strong>doubles your risk</strong>. If a parent or sibling has high blood pressure, regular monitoring is especially important for you." },
-  { keys:['accurate','accuracy','model','algorithm','ml'], reply:"The cardiovascular model is a <strong>Gradient Boosting Classifier</strong> trained on 88,202 patient records — accuracy ~73.3%, AUC ~0.80. The hypertension risk uses a validated heuristic based on the 175k-record Kaggle dataset. Both are screening tools, not clinical diagnoses." },
-  { keys:['dataset','data','records'], reply:"CardioAI uses <strong>Cardio Train</strong> (~68k Russian patients) + <strong>Shanxi Cardio</strong> (~19k Chinese patients) for cardiovascular, and a <strong>175k-record Hypertension dataset</strong> for BP risk. See <a href='/visualize'>Visualize</a> for charts." },
-  { keys:['visualize','chart','graph'], reply:"The <a href='/visualize'>Visualize</a> page now has 3 datasets: Cardio Train, Shanxi Cardio, and <strong>Hypertension Dataset</strong>. 8 real-data charts per dataset." },
-  { keys:['hello','hi','hey','help'], reply:"Hi! 👋 Ask me about: <strong>BMI</strong>, <strong>blood pressure</strong>, <strong>cholesterol</strong>, <strong>glucose</strong>, <strong>stress</strong>, <strong>salt intake</strong>, <strong>family history</strong>, or the <strong>ML model</strong>. Or go to <a href='/risk'>Know My Risk</a>." },
+  // ── Greetings (must be early so 'help' doesn't fall to fallback) ───────────
+  { keys:['hello','hi','hey'], reply:"Hi! 👋 Ask me about: <strong>BMI</strong>, <strong>blood pressure</strong>, <strong>cholesterol</strong>, <strong>glucose</strong>, <strong>stress</strong>, <strong>salt intake</strong>, or the <strong>ML model</strong>. Or jump straight to <a href='/risk'>Know My Risk</a>." },
+
+  // ── Reduce Risk (must come BEFORE the 'risk' rule — 'How to Reduce Risk' contains 'risk') ──
+  { keys:['reduce','lower','improve','prevent','lifestyle'], reply:"The biggest levers for heart health: <strong>exercise</strong> (150 min/week), <strong>quit smoking</strong>, <strong>heart-healthy diet</strong> (Mediterranean/DASH), and <strong>manage BP</strong>. See the full evidence-based guide on <a href='/reduce'>Reduce Risk →</a>" },
+
+  // ── Know My Risk / prediction ──────────────────────────────────────────────
+  { keys:['know my risk','predict','assessment','guided'], reply:"Head to <a href='/risk'>Know My Risk →</a> for a guided step-by-step assessment. I'll walk you through age, blood pressure, cholesterol, and lifestyle — then give you an instant ML-powered result." },
+
+  // ── FAQ ────────────────────────────────────────────────────────────────────
+  { keys:['faq','question','questions','explain','what is','how does','how do'], reply:"Great question! Check out the <a href='/faq'>FAQ page →</a> — it covers every input parameter, how cholesterol and glucose scales work, what the ML model does, and the hypertension assessment in detail." },
+
+  // ── Help ───────────────────────────────────────────────────────────────────
+  { keys:['help'], reply:"Here's what I can help with:<br>• <a href='/risk'>Know My Risk</a> — guided cardiovascular assessment<br>• <a href='/reduce'>Reduce Risk</a> — evidence-based lifestyle tips<br>• <a href='/visualize'>Visualize</a> — explore dataset charts<br>• <a href='/faq'>FAQ</a> — all parameters explained<br><br>Or just ask me about BMI, blood pressure, cholesterol, glucose, stress, or salt." },
+
+  // ── Specific health topics ─────────────────────────────────────────────────
+  { keys:['bmi','body mass'], reply:"<strong>BMI = weight(kg) ÷ height(m)²</strong>. Ranges: &lt;18.5 Underweight · 18.5–24.9 Normal · 25–29.9 Overweight · 30+ Obese. The form calculates it automatically. More detail on the <a href='/faq'>FAQ page →</a>" },
+  { keys:['blood pressure','bp','systolic','diastolic','high blood pressure'], reply:"Blood pressure: <strong>systolic (ap_hi)</strong> = pressure when heart beats · <strong>diastolic (ap_lo)</strong> = between beats. Normal: &lt;120/80. High: ≥130/80 mmHg. We predict hypertension risk too — fill in the optional section on the home page! See the <a href='/faq'>FAQ →</a> for more." },
+  { keys:['hypertension'], reply:"Hypertension (high blood pressure) is a major cardiovascular risk factor. We now predict it separately using 3 extra inputs: family history, stress level, and salt intake. Fill in the optional section on the home page, or take the full guided assessment on <a href='/risk'>Know My Risk →</a>" },
+  { keys:['cholesterol','ldl','lipid'], reply:"Cholesterol: <strong>1-Normal</strong> &lt;200 mg/dL · <strong>2-Above Normal</strong> 200–239 · <strong>3-High</strong> 240+. Get a fasting lipid panel test from your doctor. Full scale explained on the <a href='/faq'>FAQ page →</a>" },
+  { keys:['glucose','blood sugar','diabetes'], reply:"Fasting glucose: <strong>1-Normal</strong> &lt;100 mg/dL · <strong>2-Pre-diabetic</strong> 100–125 · <strong>3-Diabetic</strong> 126+. Both pre-diabetes and diabetes raise heart risk. See the <a href='/faq'>FAQ →</a> for details." },
+  { keys:['smoke','smoking','cigarette'], reply:"Smoking is one of the top cardiovascular risk factors. <strong>Within 1 year of quitting, heart disease risk drops by half.</strong> See tips on <a href='/reduce'>Reduce Risk →</a>" },
+  { keys:['stress'], reply:"Chronic stress raises cortisol which elevates blood pressure over time. Rate your stress 1–9 in the hypertension section. Meditation, breathwork, and exercise all help — see <a href='/reduce'>Reduce Risk →</a>" },
+  { keys:['salt','sodium'], reply:"WHO recommends under <strong>5 g of salt per day</strong>. High sodium causes water retention which raises blood pressure. Cooking fresh helps a lot. More on <a href='/reduce'>Reduce Risk →</a>" },
+  { keys:['family history','hereditary','genetic'], reply:"Family history of hypertension roughly <strong>doubles your risk</strong>. If a parent or sibling has high BP, regular monitoring matters more. See the <a href='/faq'>FAQ →</a> for the full explanation." },
+  { keys:['accurate','accuracy','model','algorithm','ml'], reply:"The cardiovascular model is a <strong>Gradient Boosting Classifier</strong> trained on 88,202 patient records — accuracy ~73.3%, AUC ~0.80. The hypertension risk uses a validated heuristic based on the 175k-record Kaggle dataset. Both are screening tools, not clinical diagnoses. More in the <a href='/faq'>FAQ →</a>" },
+  { keys:['dataset','data','records'], reply:"CardioAI uses <strong>Cardio Train</strong> (~68k Russian patients) + <strong>Shanxi Cardio</strong> (~19k Chinese patients) for cardiovascular, and a <strong>175k-record Hypertension dataset</strong> for BP risk. See <a href='/visualize'>Visualize →</a> for charts." },
+  { keys:['visualize','chart','graph'], reply:"The <a href='/visualize'>Visualize →</a> page has 3 datasets: Cardio Train, Shanxi Cardio, and the Hypertension Dataset. 8 real-data charts per dataset including age distribution, BMI scatter, and cholesterol breakdown." },
+  { keys:['risk'], reply:"Head to <a href='/risk'>Know My Risk →</a> for a full guided assessment, or use the quick form on this page. To <em>reduce</em> your risk, visit <a href='/reduce'>Reduce Risk →</a>" },
 ];
 
 function sendChat() {
@@ -149,6 +164,6 @@ function sendChat() {
   const lower = msg.toLowerCase();
   let reply = null;
   for (const rule of CHAT_RULES) { if (rule.keys.some(k=>lower.includes(k))) { reply=rule.reply; break; } }
-  if (!reply) reply = "I'm not sure about that. Try asking about <strong>BMI</strong>, <strong>blood pressure</strong>, <strong>cholesterol</strong>, or the <strong>ML model</strong>. Or visit <a href='/risk'>Know My Risk</a>.";
+  if (!reply) reply = "I don't have a specific answer for that, but the <a href='/faq'>FAQ page →</a> covers most topics in depth. You can also ask me about <strong>BMI</strong>, <strong>blood pressure</strong>, <strong>cholesterol</strong>, <strong>glucose</strong>, <strong>stress</strong>, or <strong>salt intake</strong>.";
   setTimeout(() => addChatMsg(reply, 'bot'), 400);
 }
