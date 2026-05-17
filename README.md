@@ -1,20 +1,18 @@
 # Cardiovascular Disease Prediction
 
-> *A machine learning web app that predicts cardiovascular disease risk from clinical indicators — trained on 70,000+ real patient records.*
+> *A machine learning web app that predicts cardiovascular disease risk from clinical indicators — trained on 70,000+ real patient records. Now extended with a hypertension risk module covering a second disease using a dedicated hypertension dataset.*
 
 **by Yash Kewlani · [Live Demo](https://cardiovascular-disease-prediction-sandy.vercel.app)**
 
-![Python](https://img.shields.io/badge/Python-3.x-blue?style=flat-square&logo=python)
-![Flask](https://img.shields.io/badge/Flask-Backend-lightgrey?style=flat-square&logo=flask)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-GradientBoosting-orange?style=flat-square&logo=scikit-learn)
-![Deployed](https://img.shields.io/badge/Deployed-Vercel-black?style=flat-square&logo=vercel)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+![Python](https://img.shields.io/badge/Python-3.x-blue?style=flat-square&logo=python) ![Flask](https://img.shields.io/badge/Flask-Backend-lightgrey?style=flat-square&logo=flask) ![scikit-learn](https://img.shields.io/badge/scikit--learn-GradientBoosting-orange?style=flat-square&logo=scikit-learn) ![Deployed](https://img.shields.io/badge/Deployed-Vercel-black?style=flat-square&logo=vercel) ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
 ---
 
 ## What This Is
 
 A full-stack AI web application that takes 11 clinical inputs — age, blood pressure, cholesterol, BMI, lifestyle factors — and predicts whether a patient is at high or low risk for cardiovascular disease.
+
+The app now covers **two diseases**. Alongside the main cardiovascular model, a separate **hypertension risk module** is trained on `hypertension_dataset.csv` — a dedicated dataset with its own features (family history, stress level, salt intake) not present in the cardio datasets. The two models run independently and show results side by side.
 
 Built end-to-end: data cleaning, model training, REST API, and a full interactive frontend with risk visualizations.
 
@@ -24,21 +22,32 @@ Built end-to-end: data cleaning, model training, REST API, and a full interactiv
 
 ## Model Performance
 
+### Cardiovascular Disease Model
+
 | Metric | Score |
-|---|---|
+| --- | --- |
 | Model | Gradient Boosting Classifier |
 | Accuracy | ~73% |
 | AUC-ROC | ~0.80 |
 | Training records | 70,000+ |
 | Datasets | cardio_train.csv + shanxi_cardio.csv |
 
-The app also includes a **heuristic fallback** system — if the model file isn't available, it calculates risk from BMI, blood pressure, cholesterol, glucose, and lifestyle factors using clinical thresholds.
+### Hypertension Model
+
+| Metric | Score |
+| --- | --- |
+| Model | Gradient Boosting Classifier |
+| Dataset | hypertension_dataset.csv |
+| Features | Family history, stress level, salt intake, age, BMI, blood pressure |
+
+The app also includes a **heuristic fallback** system — if a model file isn't available, risk is calculated from clinical thresholds for BMI, blood pressure, cholesterol, glucose, and lifestyle factors.
 
 ---
 
 ## Features
 
-- **Risk prediction** — input 11 clinical indicators, get a probability score and high/low risk classification
+- **Cardiovascular risk prediction** — input 11 clinical indicators, get a probability score and high/low risk classification
+- **Hypertension risk module** — a separate model trained on `hypertension_dataset.csv`, covering a second disease with its own dedicated features and scoring
 - **Interactive visualizations** — age distribution, gender comparison, cholesterol risk, BMI vs blood pressure scatter, physical activity analysis
 - **Multi-dataset support** — Kaggle cardio dataset + Shanxi regional dataset
 - **REST API** — `POST /predict` endpoint for programmatic access
@@ -61,52 +70,56 @@ The app also includes a **heuristic fallback** system — if the model file isn'
 ```
 Cardiovascular-disease-prediction/
 │
-├── App.py                     # Flask app — routes, prediction API, viz data API
-├── dataset.py                 # Data cleaning + model training script
-├── model.pkl                  # Trained Gradient Boosting model
+├── App.py                        # Flask app — routes, prediction API, viz data API
+├── dataset.py                    # Data cleaning + model training script
+├── model.pkl                     # Trained Gradient Boosting model (cardiovascular)
 ├── requirements.txt
 │
-├── cardio_train.csv           # Primary dataset (Kaggle)
-├── shanxi_cardio.csv          # Secondary dataset (Shanxi regional)
-├── cardio_clean.csv           # Cleaned cardio dataset
-├── shanxi_clean.csv           # Cleaned shanxi dataset
-├── combined_clean.csv         # Merged dataset
+├── cardio_train.csv              # Primary cardio dataset (Kaggle, ~70k records)
+├── shanxi_cardio.csv             # Secondary cardio dataset (Shanxi regional)
+├── cardio_clean.csv              # Cleaned cardio dataset
+├── shanxi_clean.csv              # Cleaned shanxi dataset
+├── combined_clean.csv            # Merged cardio dataset used for model training
+├── hypertension_dataset.csv      # Dedicated dataset for hypertension model
 │
 ├── templates/
-│   ├── Index.html             # Home page
-│   ├── Risk.html              # Risk assessment form + result
-│   ├── Reduce.html            # How to reduce risk
-│   ├── Visualize.html         # Dataset visualizations
-│   └── Faq.html               # FAQ
+│   ├── Index.html                # Home page — quick prediction + hypertension form
+│   ├── Risk.html                 # Guided step-by-step cardiovascular assessment
+│   ├── Reduce.html               # How to reduce risk (both diseases)
+│   ├── Visualize.html            # Dataset visualizations
+│   └── Faq.html                  # FAQ
 │
 ├── static/
 │   ├── style.css
 │   └── script.js
 │
-└── api/                       # Vercel serverless config
+└── api/                          # Vercel serverless entry point
 ```
 
 ---
 
 ## Getting Started
 
-```bash
+```
 git clone https://github.com/yakew7/Cardiovascular-disease-prediction.git
 cd Cardiovascular-disease-prediction
 pip install -r requirements.txt
 ```
 
 **Train the model and clean the datasets:**
-```bash
+
+```
 python3 dataset.py
 ```
 
 **Start the Flask server:**
-```bash
+
+```
 python3 App.py
 ```
 
 **Open in browser:**
+
 ```
 http://localhost:5000
 ```
@@ -120,6 +133,7 @@ http://localhost:5000
 Predict cardiovascular risk from clinical inputs.
 
 **Request body:**
+
 ```json
 {
   "age": 45,
@@ -137,6 +151,7 @@ Predict cardiovascular risk from clinical inputs.
 ```
 
 **Response:**
+
 ```json
 {
   "prediction": 1,
@@ -156,8 +171,10 @@ Returns aggregated dataset statistics for all visualizations. Supports `dataset=
 
 ## Input Features
 
+### Cardiovascular Model
+
 | Feature | Description | Values |
-|---|---|---|
+| --- | --- | --- |
 | `age` | Age in years | e.g. 45 |
 | `gender` | Biological sex | 1 = female, 2 = male |
 | `height` | Height in cm | e.g. 170 |
@@ -169,6 +186,18 @@ Returns aggregated dataset statistics for all visualizations. Supports `dataset=
 | `smoke` | Smoking | 0 = no, 1 = yes |
 | `alco` | Alcohol intake | 0 = no, 1 = yes |
 | `active` | Physical activity | 0 = no, 1 = yes |
+
+### Hypertension Model (Separate Dataset)
+
+Trained on `hypertension_dataset.csv` — a dedicated dataset with features specific to hypertension risk, entirely separate from the cardio training data.
+
+| Feature | Description | Values |
+| --- | --- | --- |
+| `family_hx` | Family history of hypertension | 0 = no, 1 = yes |
+| `stress` | Average daily stress level | 1 (very low) – 9 (very high) |
+| `salt_intake` | Daily salt consumption | low (<5 g/day), moderate (5–10 g/day), high (10–15 g/day) |
+
+A family history of hypertension roughly doubles baseline risk. Chronic stress elevates cortisol and adrenaline, pushing blood pressure up over time. The WHO recommends staying under 5 g of salt per day — most processed food exceeds this. All three fields are optional and do not affect the main cardiovascular prediction.
 
 ---
 
