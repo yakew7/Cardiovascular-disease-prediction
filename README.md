@@ -76,6 +76,7 @@ Cardiovascular-disease-prediction/
 ├── dataset.py                    # Data cleaning + model training script
 ├── model.pkl                     # Trained Gradient Boosting model (cardiovascular)
 ├── requirements.txt
+├── CHANGELOG.md
 │
 ├── cardio_train.csv              # Primary cardio dataset (Kaggle, ~70k records)
 ├── shanxi_cardio.csv             # Secondary cardio dataset (Shanxi regional)
